@@ -22,6 +22,12 @@ export class TodolistService {
   readonly observable = this.subj.asObservable();
 
   constructor() {
+    // on reprend les données enregistrées dans le localStorage puis
+    // on les envoie dans le behaviour subjecteur 
+    var retrievedData=localStorage.getItem('data');
+    if(retrievedData){
+      this.subj.next(JSON.parse(retrievedData));
+    }
   }
 
   create(...labels: readonly string[]): this {
