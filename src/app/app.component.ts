@@ -1,13 +1,15 @@
 import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
-import { TodoList, TodolistService } from './todolist.service';
-console.log("test");
+import { TodoItem, TodoList, TodolistService } from './todolist.service';
+
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
   providers:[TodolistService]
 })
+
 export class AppComponent{
   title = 'l3m-tpX-todolist-angular-y2022';  
 
@@ -18,19 +20,20 @@ export class AppComponent{
     this.obsToDo=this.toDoService.observable;
   }
 
-  add(label: string){ //reste operator ...
-    console.log("add");
+  add(label: string){
     console.log(label);
     this.toDoService.create(label);
     // var labels : string[]= [this.newItem];
   }
 
-  // create(){
-  // // this.TS.create(...arguments);
-  // console.log("create");
-  // }
-
-  delete(){
+  delete(item: TodoItem){
+    this.toDoService.delete(item);
     console.log("delete");
+  }
+
+  update(data :Partial<TodoItem>,item: TodoItem){
+    this.toDoService.update(data, item);
+    console.log("update: item.label = "+item.label);
+    console.log("update: item.isDone = "+item.isDone);
   }
 }
