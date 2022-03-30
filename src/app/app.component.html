@@ -1,7 +1,14 @@
-<h1>TODO liste mamoune bellatif</h1>
+<h1>TODO liste</h1>
 
 <form>
-    <input placeholder="Ce qu'il y a faire" (keyup.enter)="create()" >
+    <input autofocus="" placeholder="Ce qu'il y a faire" [(ngModel)]="newItem" (keyup.enter)="add()" >
 </form>
 
+<ul *ngIf="obsToDo | async as TD">
+    <li *ngFor="let e of TD.items">
+        <input type="checkbox">
+        <input [ngModel]="e.label" type="text">
+        <input type="button" value="X" (click)="delete()">
+    </li>
+</ul>
 

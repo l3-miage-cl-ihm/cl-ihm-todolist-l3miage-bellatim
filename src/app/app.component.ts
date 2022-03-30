@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { TodolistService } from './todolist.service';
+import { Observable } from 'rxjs';
+import { TodoList, TodolistService } from './todolist.service';
 console.log("test");
 @Component({
   selector: 'app-root',
@@ -7,16 +8,26 @@ console.log("test");
   styleUrls: ['./app.component.scss'],
   providers:[TodolistService]
 })
-export class AppComponent {
+export class AppComponent{
   title = 'l3m-tpX-todolist-angular-y2022';  
 
-  constructor(private TS: TodolistService){
-    
+  obsToDo: Observable<TodoList>;
+  newItem: string ='';
+
+  constructor(private toDoService: TodolistService){
+    this.obsToDo=this.toDoService.observable;
   }
 
-    create(){
-    // this.TS.create(...arguments);
-    console.log("create");
-    
+  add(){
+    console.log("add");
+  }
+
+  create(){
+  // this.TS.create(...arguments);
+  console.log("create");
+  }
+
+  delete(){
+    console.log("delete");
   }
 }
