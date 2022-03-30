@@ -18,14 +18,17 @@ export class AppComponent{
     this.obsToDo=this.toDoService.observable;
   }
 
-  add(){
+  add(label: string){ //reste operator ...
     console.log("add");
+    console.log(label);
+    this.toDoService.create(label);
+    // var labels : string[]= [this.newItem];
   }
 
-  create(){
-  // this.TS.create(...arguments);
-  console.log("create");
-  }
+  // create(){
+  // // this.TS.create(...arguments);
+  // console.log("create");
+  // }
 
   delete(){
     console.log("delete");
