@@ -21,8 +21,12 @@ export class TodolistService {
   private subj = new BehaviorSubject<TodoList>({label: 'L3 MIAGE', items: [] });
   readonly observable = this.subj.asObservable();
 
+
   constructor() {
-    // on reprend les données enregistrées dans le localStorage puis
+  }
+
+  loadData(){
+// on reprend les données enregistrées dans le localStorage puis
     // on les envoie dans le behaviour subjecteur 
     var retrievedData=localStorage.getItem('data');
     if(retrievedData){

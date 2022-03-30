@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
+import { HistoryService } from './history.service';
 import { TodoItem, TodoList, TodolistService } from './todolist.service';
 
 
@@ -7,10 +8,10 @@ import { TodoItem, TodoList, TodolistService } from './todolist.service';
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  providers:[TodolistService]
+  providers:[TodolistService, HistoryService]
 })
 
-export class AppComponent{
+export class AppComponent implements OnInit {
   title = 'l3m-tpX-todolist-angular-y2022';  
 
   obsToDo: Observable<TodoList>;
@@ -21,11 +22,15 @@ export class AppComponent{
     this.obsToDo=this.toDoService.observable;
   }
 
+  ngOnInit(){
+    this.toDoService.loadData();
+  }
+
   add(label: string){
     this.toDoService.create(label);
     //on s'abonne a l'observable pour pouvoir le mettre dans le localStorage
     this.obsToDo.subscribe(data=>localStorage.setItem('data',JSON.stringify(data)));
- 
+    
   }
 
   delete(item: TodoItem){
@@ -36,6 +41,14 @@ export class AppComponent{
   update(data :Partial<TodoItem>,item: TodoItem){
     this.toDoService.update(data, item);
     this.obsToDo.subscribe(data=>localStorage.setItem('data',JSON.stringify(data)));
+  }
+
+  annuler(){
+
+  }
+
+  refaire(){
+
   }
 
   //pour ne pas perdre le focus quand on met a jour un item
