@@ -116,7 +116,7 @@ export class TodoListComponent implements OnInit {
 
   //recupere la liste des items, compte le nombre ditem restant avec un reduce puis se desabonne
   count(){
-    this.obsToDo.subscribe(data=>this.remaining=data.items.reduce((acc, item)=>(!item.isDone)?acc+1:acc,0)).unsubscribe;
+    this.obsToDo.subscribe(data=>this.remaining=data.items.reduce((acc, item)=>(!item.isDone)?acc+1:acc,0)).unsubscribe();
   }
   //en cours d'edition ou pas
   changeEdit(isEditing: boolean, item: TodoItem){
@@ -155,7 +155,6 @@ export class TodoListComponent implements OnInit {
   }
 
   deleteDone(){
-    console.log("delelte done");
     this.obsToDo.subscribe(data => data.items.forEach(
         item => {if(item.isDone){this.toDoService.delete(item)}
           })).unsubscribe();
@@ -163,6 +162,16 @@ export class TodoListComponent implements OnInit {
   this.count();
   this.saveState();
   }
+
+  checkAll(items: readonly TodoItem[]){
+    console.log("chekall");
+    this.toDoService.update({isDone:true}, ...items);
+    this.count();
+    this.saveState();
+
+
+  }
+
 
 
    //pour ne pas perdre le focus quand on met a jour un item

@@ -64,6 +64,7 @@ export class TodolistService {
   }
 
   update(data: Partial<TodoItem>, ...items: readonly TodoItem[]): this {
+    console.log("updagte");
     if(data.label !== "") {
       const L = this.subj.value;
       this.subj.next( {
@@ -76,4 +77,20 @@ export class TodolistService {
     return this;
   }
 
+  // checkAll(){
+  //   console.log("checkall");
+
+  //   L.items.map(item =>{
+  //     console.log("test");
+  //     ({label:item.label, isEditing:item.isEditing, isDone:true, id:item.id})});
+
+  //   this.subj.next(L);
+  // }
+
+  // doneAll(){
+  //   const L = this.subj.value;
+  //   this.subj.next(L.items.map(item => ({...item, isDone: true, ...item})));
+
+    
+  
 }
