@@ -65,16 +65,42 @@ export class AppComponent implements OnInit {
 
   annuler(){
     console.log("annuler comp");
-    this.HS.undo();
-    this.obsHistory.subscribe(data=>{
-      this.toDoService.load(data.current);
-      console.log("current load: "+data.current.label);
-    }).unsubscribe();
+    var canUndo=false;
+    var currentIndex=0;
+    this.obsHistory.subscribe(data=>currentIndex=data.currentIndex).unsubscribe();
+    if(currentIndex>1){
+      this.HS.undo();
+      this.obsHistory.subscribe(data=>{
+        this.toDoService.load(data.current);
+        localStorage.setItem('data',JSON.stringify(data.current));
+        console.log("current load: "+data.current.label);
+      }).unsubscribe();
+    }
+    else{
+      console.log("cannot undo (comp undo)");
+
+    }
+    
       
   }
 
   refaire(){
+    console.log("refaire comp");
+    var currentIndex=0;
+    var length=0;
+    this.obsHistory.subscribe(data=>{
+      currentIndex=data.currentIndex;
+      length=data.history.length;
+    }).unsubscribe();
 
+    if(currentIndex<length){
+      this.HS.redo();
+      this.obsHistory.subscribe(data=>{
+        this.toDoService.load(data.current);
+        localStorage.setItem('data',JSON.stringify(data.current));
+        console.log("current load: "+data.current.label);
+      }).unsubscribe();
+    }
   }
 
   //pour ne pas perdre le focus quand on met a jour un item

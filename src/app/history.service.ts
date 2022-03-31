@@ -25,13 +25,17 @@ export class HistoryService<T> {
   push(obj: T){
     console.log("push obj:"+obj);
     const history = this.subj.value;
-    var bool = false;
-    if(history.history.length>2){
-      bool = true;
+    var bool = true;
+    if(history.history.length<2  && history.currentIndex==0){
+      console.log("cannot undo (service push)");
+      bool = false;
+    }
+    else{
+      bool=true;
     }
     // var newHistory =history.history.push(obj);
     this.subj.next({
-      canUdo:true,
+      canUdo:bool,
       canRedo:false,
       history: [...history.history.slice(0,history.currentIndex), obj],
       currentIndex: history.currentIndex + 1,
@@ -46,8 +50,13 @@ export class HistoryService<T> {
     console.log("undo");
     const h = this.subj.value;
     var newIndex=h.currentIndex-1;
+    var newUndo=true;
+    if(h.history.length<2 || h.currentIndex==0){
+      newUndo=false;
+      console.log("cannot undo (service undo)");
+    }
     this.subj.next({
-      canUdo: h.history.length>2,
+      canUdo: newUndo,
       canRedo: h.history.length>2,
       history: h.history,
       currentIndex: newIndex,
@@ -71,6 +80,36 @@ export class HistoryService<T> {
     //   history: [...this.backStack,...this.forwardStack],
     //   currentIndex: h.currentIndex-1,
     //   current: h.history[h.currentIndex-1]
+    // })
+  }
+
+  redo(){
+    console.log("redo");
+    const h = this.subj.value;
+    var newIndex=h.currentIndex+1;
+    var newRedo=true;
+    if(h.history.length<2 && h.currentIndex==0){
+      newRedo=false;
+      console.log("cannot redo (service redo)");
+    }
+    this.subj.next({
+      canUdo: h.history.length>2,
+      canRedo: newRedo,
+      history: h.history,
+      currentIndex: newIndex,
+      current: h.history[newIndex-1]
+    })
+    console.log("current index: "+this.subj.value.currentIndex);
+    console.log("historyLenghth"+this.subj.value.history.length);
+    // var pop = this.forwardStack.pop();
+    // if(pop){
+    //   this.backStack.push(pop);
+    // }
+    // this.subj.next({
+    //   ...h,
+    //   history: [...this.backStack,...this.forwardStack],
+    //   currentIndex: h.currentIndex+1,
+    //   current: h.history[h.currentIndex+1]
     // })
   }
   
