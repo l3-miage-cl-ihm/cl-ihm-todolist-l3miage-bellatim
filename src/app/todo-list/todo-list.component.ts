@@ -16,6 +16,8 @@ export class TodoListComponent implements OnInit {
   obsHistory: Observable<History<TodoList>>;
   isDisabled: string = "disabled";
   save!: TodoList;
+  isEditable: boolean=false;
+  remaining=0;
 
   constructor(private toDoService: TodolistService, private HS: HistoryService<TodoList>) { 
     this.obsToDo=this.toDoService.observable;
@@ -26,6 +28,14 @@ export class TodoListComponent implements OnInit {
 
   ngOnInit(): void {
     this.toDoService.loadData();
+    this.count();
+
+  }
+
+ 
+
+  editable(){
+    this.isEditable=!this.isEditable;
   }
 
   add(label: string){
@@ -38,6 +48,7 @@ export class TodoListComponent implements OnInit {
     }).unsubscribe();
       
     console.log("add");
+    this.count();
   }
   delete(item: TodoItem){
     this.toDoService.delete(item);
@@ -46,7 +57,7 @@ export class TodoListComponent implements OnInit {
       this.HS.push(data);
       console.log("observation-delete");
     }).unsubscribe();
-
+    this.count();
   }
 
   update(data :Partial<TodoItem>,item: TodoItem){
@@ -57,7 +68,8 @@ export class TodoListComponent implements OnInit {
       this.HS.push(data);
       console.log("observation-update");
     }).unsubscribe();
-
+    this.count();
+    
   }
   
   annuler(){
@@ -78,7 +90,8 @@ export class TodoListComponent implements OnInit {
 
     }
     
-      
+    this.count();
+
   }
 
   refaire(){
@@ -98,6 +111,17 @@ export class TodoListComponent implements OnInit {
         console.log("current load: "+data.current.label);
       }).unsubscribe();
     }
+    this.count();
+
+  }
+
+  //recupere la liste des items, compte le nombre de restante avec un reduce puis se desabonne
+  count(){
+    this.obsToDo.subscribe(data=>this.remaining=data.items.reduce((acc, item)=>(!item.isDone)?acc+1:acc,0)).unsubscribe;
+  }
+  //en cours d'edition ou pas
+  changeEdit(isEditing: boolean, item: TodoItem){
+    this.toDoService.update({isEditing:!isEditing}, item);
   }
 
 

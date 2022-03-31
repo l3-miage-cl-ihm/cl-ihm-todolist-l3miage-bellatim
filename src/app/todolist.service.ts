@@ -3,6 +3,7 @@ import { BehaviorSubject } from 'rxjs';
 
 export interface TodoItem {
   readonly label: string;
+  readonly isEditing: boolean;
   readonly isDone: boolean;
   readonly id: number;
 }
@@ -18,7 +19,7 @@ let idItem = 0;
   providedIn: 'root'
 })
 export class TodolistService {
-  private subj = new BehaviorSubject<TodoList>({label: 'L3 MIAGE', items: [] });
+  private subj = new BehaviorSubject<TodoList>({label: 'TODO', items: [] });
   readonly observable = this.subj.asObservable();
 
 
@@ -45,7 +46,7 @@ export class TodolistService {
       items: [
         ...L.items,
         ...labels.filter( l => l !== '').map(
-            label => ({label, isDone: false, id: idItem++})
+            label => ({label, isEditing:false, isDone: false, id: idItem++})
           )
       ]
     } );

@@ -11,6 +11,7 @@ export class TodoItemComponent implements OnInit {
   @Input() data!: TodoItem; 
   @Output() update = new EventEmitter<Partial<TodoItem>>();
   @Output() remove = new  EventEmitter<TodoItem>();
+  @Output() editing = new EventEmitter<boolean>();
   
   constructor() {}
 
@@ -25,5 +26,9 @@ export class TodoItemComponent implements OnInit {
     this.remove.emit(item);
   }
 
+  
+
+//            [class.editing]="true" 
+//(dblclick)="editable()"  
 
 }

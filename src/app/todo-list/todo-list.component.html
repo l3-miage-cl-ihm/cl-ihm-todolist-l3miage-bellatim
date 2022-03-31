@@ -15,13 +15,13 @@
       />
       <label for="toggleAll">Mark all as complete</label>
       <ul class="todo-list" *ngIf="obsToDo | async as TD">
-        <li *ngFor="let item of TD.items, let i = index; trackBy: trackByFn">
+        <li *ngFor="let item of TD.items, let i = index; trackBy: trackByFn"  [class.completed]="item.isDone" (dblclick)="changeEdit(item.isEditing, item)" (focusout)="changeEdit(true, item) " [class.editing]="item.isEditing">
             <app-todo-item [data]="item" (update)="update($event, item)" (remove)="delete($event)"></app-todo-item>
         </li>
       </ul>
     </section>
     <footer class="footer">
-      <span class="todo-count"><strong></strong> restantes</span>
+      <span class="todo-count" ><strong></strong> {{remaining}} restantes</span>
       <ul class="filters">
         <li>
           <a class="filterAll">Tous</a>

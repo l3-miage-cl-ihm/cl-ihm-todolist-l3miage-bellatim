@@ -13,6 +13,8 @@
     <input  #newTextInput
             name      = "newTextInput"
             class     = "edit"
+            [ngModel]="data.label"
+            (ngModelChange)="updateData({label: $event})"
     />
   </form>
   
