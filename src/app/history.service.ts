@@ -22,7 +22,8 @@ export class HistoryService<T> {
 /* On renvoie lobservale surlquel le component se delacera et a une nouvelle action la veule sera renouveléé*/
 
 
-  save(obj: T){
+  push(obj: T){
+    console.log("push obj:"+obj);
     const history = this.subj.value;
     var bool = false;
     if(history.history.length>2){
@@ -31,24 +32,41 @@ export class HistoryService<T> {
     this.subj.next({
       canUdo:true,
       canRedo:false,
-      history: [...history.history, obj],
+      history: [...history.history.slice(0,history.currentIndex), obj],
       currentIndex: history.currentIndex + 1,
       current: obj
     });
+
+    console.log("current: "+this.subj.value.currentIndex);
   }
 
   undo(){
+    console.log("undo");
     const h = this.subj.value;
-    var pop = this.backStack.pop();
-    if(pop){
-      this.forwardStack.push(pop);
-    }
     this.subj.next({
-      ...h,
-      history: [...this.backStack,...this.forwardStack],
-      currentIndex: h.currentIndex-1,
-      current: h.history[h.currentIndex-1]
+      canUdo: h.history.length>2,
+      canRedo: false,
+      history: h.history,
+      currentIndex: h.currentIndex - 1,
+      current: h.history[h.currentIndex]   
     })
+    // var pop = this.backStack.pop();
+    // if(pop){
+    //   this.forwardStack.push(pop);
+    // }
+    // this.subj.next({
+    //   ...h,
+    //   history: [...this.backStack,...this.forwardStack],
+    //   currentIndex: h.currentIndex-1,
+    //   current: h.history[h.currentIndex-1]
+    // })
+
+    // this.subj.next({
+    //   ...h,
+    //   history: [...this.backStack,...this.forwardStack],
+    //   currentIndex: h.currentIndex-1,
+    //   current: h.history[h.currentIndex-1]
+    // })
   }
   
 }

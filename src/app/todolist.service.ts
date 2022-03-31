@@ -25,6 +25,10 @@ export class TodolistService {
   constructor() {
   }
 
+  load(data: TodoList){
+    this.subj.next(data);
+  }
+
   loadData(){
 // on reprend les données enregistrées dans le localStorage puis
     // on les envoie dans le behaviour subjecteur 
