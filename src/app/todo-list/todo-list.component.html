@@ -1,0 +1,39 @@
+<section class="todoapp">
+    <header class="header">
+      <h1 *ngIf="obsToDo | async as TD">{{TD.label}}</h1>
+      <form (keyup.enter)="add(lab.value)">
+        <input  name        = "newTodoInput"
+                class       = "new-todo"
+                placeholder = "Que faire?"
+                autofocus #lab/>
+      </form>
+    </header>
+    <section class="main">
+      <input  class="toggle-all"
+              type="checkbox"
+              name="toggleAll"
+      />
+      <label for="toggleAll">Mark all as complete</label>
+      <ul class="todo-list" *ngIf="obsToDo | async as TD">
+        <li *ngFor="let item of TD.items, let i = index; trackBy: trackByFn">
+            <app-todo-item [data]="item" (update)="update($event, item)" (remove)="delete($event)"></app-todo-item>
+        </li>
+      </ul>
+    </section>
+    <footer class="footer">
+      <span class="todo-count"><strong></strong> restantes</span>
+      <ul class="filters">
+        <li>
+          <a class="filterAll">Tous</a>
+        </li>
+        <li>
+          <a class="filterActives">Actifs</a>
+        </li>
+        <li>
+          <a class="filterCompleted">Complétés</a>
+        </li>
+      </ul>
+      <button class="clear-completed">Supprimer cochées</button>
+    </footer>
+  </section>
+  

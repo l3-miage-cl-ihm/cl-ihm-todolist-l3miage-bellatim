@@ -1,0 +1,21 @@
+<h1>TODO liste</h1>
+
+<!-- lors de l'appui sur entrée on appele add() avec la valeur de l'input -->
+<form (keyup.enter)="add(label.value)">
+    <input #label autofocus="" placeholder="Ce qu'il y a faire"  >
+</form>
+
+<!-- abonnement depuis la vue  -->
+<ul class="navbar-nav mx-auto" *ngIf="obsToDo | async as TD">
+    <li class="nav-item" *ngFor="let e of TD.items; let i = index; trackBy: trackByFn">
+        <input [ngModel]="e.isDone" (ngModelChange)="update({isDone: $event},e)" type="checkbox">
+        <input  #lab autofocus="" [ngModel]="e.label" (ngModelChange)="update({label :$event},e)" type="text">
+        <input type="button" value="supprimer" (click)="delete(e)">
+        <!-- <label #labb (dblclick)="update({label: labb.value},e)">{{e.label}}</label> -->
+    </li>
+</ul>
+
+<input type="button" value="annuler" (click)="annuler()">
+<input type="button" value="refaire" (click)="refaire()">
+
+<app-todo-list></app-todo-list>

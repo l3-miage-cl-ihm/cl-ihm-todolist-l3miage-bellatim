@@ -19,9 +19,9 @@ export class HistoryService<T> {
   private subj = new BehaviorSubject<History<T>>({canUdo: false, canRedo: false, history: [], currentIndex: 0, current: null!});
   readonly observable = this.subj.asObservable();
   constructor() { }
-/* On renvoie lobservale surlquel le component se delacera et a une nouvelle action la veule sera renouveléé*/
 
 
+  //push est appelée a chaque action par le component root
   push(obj: T){
     console.log("push obj:"+obj);
     const history = this.subj.value;
