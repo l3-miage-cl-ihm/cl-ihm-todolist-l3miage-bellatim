@@ -38,10 +38,6 @@ export class AppComponent implements OnInit {
       console.log("observation");
     }).unsubscribe();
       
-      
-    //   [localStorage.setItem('data',JSON.stringify(data))]);
-    // this.obsToDo.subscribe(data=>this.HS.push(data)).unsubscribe;
-    // this.obsToDo.subscribe(() => console.log("observation")).unsubscribe;
     console.log("add");
     
   }
@@ -58,14 +54,23 @@ export class AppComponent implements OnInit {
 
   update(data :Partial<TodoItem>,item: TodoItem){
     this.toDoService.update(data, item);
-    this.obsToDo.subscribe(data=>localStorage.setItem('data',JSON.stringify(data)));
-    this.obsToDo.subscribe(data=>this.HS.push(data));
+
+    this.obsToDo.subscribe(data => {
+      localStorage.setItem('data',JSON.stringify(data));
+      this.HS.push(data);
+      console.log("observation-update");
+    });
+
   }
 
   annuler(){
     console.log("annuler comp");
     this.HS.undo();
-    this.obsHistory.subscribe(data=>this.toDoService.load(data.current));
+    this.obsHistory.subscribe(data=>{
+      this.toDoService.load(data.current);
+      console.log("current load: "+data.current.label);
+    }).unsubscribe();
+      
   }
 
   refaire(){
