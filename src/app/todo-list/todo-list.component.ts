@@ -89,8 +89,6 @@ export class TodoListComponent implements OnInit {
         localStorage.setItem('data',JSON.stringify(data.current));
       }).unsubscribe();
     }
-
-    
     this.count();
 
   }
