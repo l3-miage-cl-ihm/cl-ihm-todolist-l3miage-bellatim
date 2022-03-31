@@ -19,6 +19,9 @@ export class TodoListComponent implements OnInit {
   isEditable: boolean=false;
   remaining=0;
 
+  showAll=true;
+  showDone=false;
+  showActive=false;
   constructor(private toDoService: TodolistService, private HS: HistoryService<TodoList>) { 
     this.obsToDo=this.toDoService.observable;
     this.obsHistory=this.HS.observable;
@@ -32,48 +35,50 @@ export class TodoListComponent implements OnInit {
 
   }
 
- 
+  @HostListener('document:keydown.control.z') undo(event: KeyboardEvent) { 
+    this.annuler();  
+  } 
 
-  editable(){
-    this.isEditable=!this.isEditable;
+  @HostListener('document:keydown.control.y') redo(event: KeyboardEvent) { 
+    this.refaire();  
+  } 
+
+  //on s'abonne a l'observable pour pouvoir le mettre dans le localStorage, push dans l'historique et unsubscribe pour eviter les doublons
+  private saveState(){
+      this.obsToDo.subscribe(data=>{
+        localStorage.setItem('data',JSON.stringify(data));
+        this.HS.push(data);
+      }).unsubscribe();
   }
 
-  add(label: string){
+  // //enlever
+  // editable(){
+  //   this.isEditable=!this.isEditable;
+  // }
+
+    //ajoute un item dans la liste
+    add(label: string){
     this.toDoService.create(label);
-    //on s'abonne a l'observable pour pouvoir le mettre dans le localStorage, push dans l'historique et unsubscribe pour eviter les doublons
-    this.obsToDo.subscribe(data=>{
-      localStorage.setItem('data',JSON.stringify(data));
-      this.HS.push(data);
-      console.log("observation");
-    }).unsubscribe();
-      
-    console.log("add");
+    this.saveState();
     this.count();
   }
+
+  //supprime un item de la liste
   delete(item: TodoItem){
     this.toDoService.delete(item);
-    this.obsToDo.subscribe(data=>{
-      localStorage.setItem('data',JSON.stringify(data));
-      this.HS.push(data);
-      console.log("observation-delete");
-    }).unsubscribe();
+    this.saveState();
     this.count();
   }
 
+  //met a jour un item de la liste
   update(data :Partial<TodoItem>,item: TodoItem){
     this.toDoService.update(data, item);
-
-    this.obsToDo.subscribe(data => {
-      localStorage.setItem('data',JSON.stringify(data));
-      this.HS.push(data);
-      console.log("observation-update");
-    }).unsubscribe();
+    this.saveState();
     this.count();
     
   }
   
   annuler(){
-    console.log("annuler comp");
     var canUndo=false;
     var currentIndex=0;
     this.obsHistory.subscribe(data=>currentIndex=data.currentIndex).unsubscribe();
@@ -82,20 +87,15 @@ export class TodoListComponent implements OnInit {
       this.obsHistory.subscribe(data=>{
         this.toDoService.load(data.current);
         localStorage.setItem('data',JSON.stringify(data.current));
-        console.log("current load: "+data.current.label);
       }).unsubscribe();
     }
-    else{
-      console.log("cannot undo (comp undo)");
 
-    }
     
     this.count();
 
   }
 
   refaire(){
-    console.log("refaire comp");
     var currentIndex=0;
     var length=0;
     this.obsHistory.subscribe(data=>{
@@ -108,30 +108,61 @@ export class TodoListComponent implements OnInit {
       this.obsHistory.subscribe(data=>{
         this.toDoService.load(data.current);
         localStorage.setItem('data',JSON.stringify(data.current));
-        console.log("current load: "+data.current.label);
       }).unsubscribe();
     }
     this.count();
 
   }
 
-  //recupere la liste des items, compte le nombre de restante avec un reduce puis se desabonne
+  //recupere la liste des items, compte le nombre ditem restant avec un reduce puis se desabonne
   count(){
     this.obsToDo.subscribe(data=>this.remaining=data.items.reduce((acc, item)=>(!item.isDone)?acc+1:acc,0)).unsubscribe;
   }
   //en cours d'edition ou pas
   changeEdit(isEditing: boolean, item: TodoItem){
     this.toDoService.update({isEditing:!isEditing}, item);
+    
   }
 
+  //on met show a true a tous les item
+  filterAll(){
+    this.showAll=true;
+    if(this.showAll){
+      this.showActive=false;
+      this.showDone=false;
+    }
+  }
 
-  @HostListener('document:keydown.control.z') undo(event: KeyboardEvent) { 
-    this.annuler();  
-  } 
+  //on met show a false aux item done
+  filterActive(){
+    this.showActive=true;
+    if(this.showActive){
+      this.showAll=false;
+      this.showDone=false;
+    }
+  }
 
-  @HostListener('document:keydown.control.y') redo(event: KeyboardEvent) { 
-    this.refaire();  
-  } 
+  //on met show a true aux item done
+  filterDone(){
+    this.showDone=true;
+    if(this.showDone){
+      this.showAll=false;
+      this.showActive=false;
+    }
+
+    
+
+  }
+
+  deleteDone(){
+    console.log("delelte done");
+    this.obsToDo.subscribe(data => data.items.forEach(
+        item => {if(item.isDone){this.toDoService.delete(item)}
+          })).unsubscribe();
+
+  this.count();
+  this.saveState();
+  }
 
 
    //pour ne pas perdre le focus quand on met a jour un item

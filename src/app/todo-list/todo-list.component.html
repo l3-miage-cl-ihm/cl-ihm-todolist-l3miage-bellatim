@@ -15,8 +15,8 @@
       />
       <label for="toggleAll">Mark all as complete</label>
       <ul class="todo-list" *ngIf="obsToDo | async as TD">
-        <li *ngFor="let item of TD.items, let i = index; trackBy: trackByFn"  [class.completed]="item.isDone" (dblclick)="changeEdit(item.isEditing, item)" (focusout)="changeEdit(true, item) " [class.editing]="item.isEditing">
-            <app-todo-item [data]="item" (update)="update($event, item)" (remove)="delete($event)"></app-todo-item>
+        <li *ngFor="let item of TD.items, let i = index; trackBy: trackByFn"  [class.completed]="item.isDone" (dblclick)="changeEdit(item.isEditing, item)" (focusout)="changeEdit(true, item) " [class.editing]="item.isEditing" >
+            <app-todo-item *ngIf="(!item.isDone && showActive) || (item.isDone && showDone) || (showAll) "  [data]="item" (update)="update($event, item)" (remove)="delete($event)"></app-todo-item>
         </li>
       </ul>
     </section>
@@ -24,16 +24,16 @@
       <span class="todo-count" ><strong></strong> {{remaining}} restantes</span>
       <ul class="filters">
         <li>
-          <a class="filterAll">Tous</a>
+          <a (click)="filterAll()" class="filterAll">Tous</a>
         </li>
         <li>
-          <a class="filterActives">Actifs</a>
+          <a (click)="filterActive()"class="filterActives">Actifs</a>
         </li>
         <li>
-          <a class="filterCompleted">Complétés</a>
+          <a (click)="filterDone()" class="filterCompleted">Complétés</a>
         </li>
       </ul>
-      <button class="clear-completed">Supprimer cochées</button>
+      <button (click)="deleteDone()" class="clear-completed">Supprimer cochées</button>
     </footer>
   </section>
   

@@ -46,7 +46,8 @@ export class TodolistService {
       items: [
         ...L.items,
         ...labels.filter( l => l !== '').map(
-            label => ({label, isEditing:false, isDone: false, id: idItem++})
+            label => ({label,
+               isEditing:false, isDone: false, id: idItem++})
           )
       ]
     } );
