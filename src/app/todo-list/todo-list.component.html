@@ -1,43 +1,36 @@
 <section class="todoapp">
     <header class="header">
-      <h1 *ngIf="obsToDo | async as TD">{{TD.label}}</h1>
-      <form (keyup.enter)="add(lab.value)">
-        <input  name        = "newTodoInput"
-                class       = "new-todo"
-                placeholder = "Que faire?"
-                autofocus #lab/>
-      </form>
+        <h1 *ngIf="obsToDo | async as TD">{{TD.label}}</h1>
+        <form (keyup.enter)="add(lab.value)">
+            <input name="newTodoInput" class="new-todo" placeholder="Que faire?" autofocus #lab />
+        </form>
     </header>
     <section class="main">
-      <input  class="toggle-all"
-              type="checkbox"
-              name="toggleAll"
-              [checked]="remaining==0"
-      />
-      
-      <label *ngIf="obsToDo | async as TD " 
-              (click)="checkAll(TD.items)" for="toggleAll">Mark all as complete</label>
-      <ul class="todo-list" *ngIf="obsToDo | async as TD">
-        <li *ngFor="let item of TD.items, let i = index; trackBy: trackByFn"  [class.completed]="item.isDone" (dblclick)="changeEdit(item.isEditing, item)" (focusout)="changeEdit(true, item) " [class.editing]="item.isEditing" >
-            <app-todo-item *ngIf="(!item.isDone && showActive) || (item.isDone && showDone) || (showAll) "  [data]="item" (update)="update($event, item)" (remove)="delete($event)"></app-todo-item>
-        </li>
-      </ul>
+        <input class="toggle-all" type="checkbox" name="toggleAll" [checked]="remaining==0" />
+        <label *ngIf="obsToDo | async as TD " (click)="checkAll(TD.items)" for="toggleAll" >Mark all as complete</label>
+        <ul class="todo-list" *ngIf="obsToDo | async as TD">
+            <li *ngFor="let item of TD.items, let i = index; trackBy: trackByFn" [class.completed]="item.isDone"
+                (dblclick)="changeEdit(item.isEditing, item)" (focusout)="changeEdit(true, item) "
+                [class.editing]="item.isEditing">
+                <app-todo-item *ngIf="(!item.isDone && showActive) || (item.isDone && showDone) || (showAll) "
+                    [data]="item" (update)="update($event, item)" (remove)="delete($event)"></app-todo-item>
+            </li>
+        </ul>
     </section>
     <footer class="footer">
-      <span class="todo-count" ><strong></strong> {{remaining}} restantes</span>
-      <ul class="filters">
-        <li>
-          <a (click)="filterAll()" class="filterAll">Tous</a>
-        </li>
-        <li>
-          <a (click)="filterActive()"class="filterActives">Actifs</a>
-        </li>
-        <li>
-          <a (click)="filterDone()" class="filterCompleted">Complétés</a>
-        </li>
-      </ul>
-      <button (click)="deleteDone()" class="clear-completed">Supprimer cochées</button>
+        <span class="todo-count"><strong></strong> {{remaining}} restantes</span>
+        <ul class="filters">
+            <li>
+                <a (click)="filterAll()" class="filterAll">Tous</a>
+            </li>
+            <li>
+                <a (click)="filterActive()" class="filterActives">Actifs</a>
+            </li>
+            <li>
+                <a (click)="filterDone()" class="filterCompleted">Complétés</a>
+            </li>
+        </ul>
+        <button (click)="deleteDone()" class="clear-completed">Supprimer cochées</button>
 
     </footer>
-  </section>
-  
+</section>

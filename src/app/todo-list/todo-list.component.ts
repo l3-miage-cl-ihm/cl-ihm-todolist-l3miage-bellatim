@@ -162,7 +162,6 @@ export class TodoListComponent implements OnInit {
   }
 
   checkAll(items: readonly TodoItem[]){
-    console.log("chekall");
     this.toDoService.update({isDone:true}, ...items);
     this.count();
     this.saveState();
