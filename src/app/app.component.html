@@ -1,1 +1,14 @@
-<app-todo-list></app-todo-list>
+<div *ngIf="auth.user | async as user; else showLogin">
+    <h1>Hello {{ user.displayName }}!</h1>
+    <img [src]="user.photoURL" class="img-fluid|thumbnail rounded-top|rounded-end|rounded-bottom|rounded-start|rounded-circle|" alt="">
+    <br>
+    <button (click)="logout()">Logout</button>
+    <app-todo-list></app-todo-list>
+  </div>
+  <ng-template #showLogin>
+    <p>Please login.</p>
+    <button (click)="login()">Login with Google</button>
+    <br>
+    <button (click)="loginAnon()">Login anonimously</button>
+  </ng-template>
+

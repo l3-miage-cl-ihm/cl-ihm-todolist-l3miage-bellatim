@@ -1,0 +1,17 @@
+{
+  "hosting": {
+    "public": "dist/l3m-tp-x-todolist-angular-y2022",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  },
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "database": {
+    "rules": "database.rules.json"
+  }
+}

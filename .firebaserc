@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "todo-list-ea372": {
+      "hosting": {
+        "l3m-tpX-todolist-angular-y2022": [
+          "todo-list-ea372"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "todo-list-ea372"
+  }
+}
