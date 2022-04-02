@@ -13,12 +13,13 @@ import firebase from 'firebase/compat/app';
 
 export class AppComponent {
   title = 'l3m-tpX-todolist-angular-y2022';  
-
+  userId = 'id';
   constructor(public auth: AngularFireAuth){
   }
 
   login() {
     this.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+    // this.user=this.auth.user.subscribe(data => this.user=data.)
   }
 
   loginAnon(){

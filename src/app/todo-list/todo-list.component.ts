@@ -1,7 +1,7 @@
-import { Component, OnInit, ChangeDetectionStrategy, HostListener } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, HostListener, Input } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import {AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from '@angular/fire/compat/firestore';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { HistoryService, History } from '../history.service';
 import { TodoItem, TodoList, TodolistService } from '../todolist.service';
 
@@ -29,7 +29,16 @@ export class TodoListComponent implements OnInit {
   //sauvegarder avec document  nom auth
   // private todoDoc!: AngularFirestoreDocument<TodoList>; , private afs: AngularFirestore
   listDB!: AngularFirestoreCollection<TodoList>;
-  constructor(private auth: AngularFireAuth,private toDoService: TodolistService, private HS: HistoryService<TodoList>, private db: AngularFirestore) { 
+
+  //nombre d'item restant
+  countRemaining = new BehaviorSubject<number>(0);
+
+  @Input() userName!: string;
+  @Input() userId!: string;
+  @Input() isAnon!: boolean;
+
+
+  constructor(private toDoService: TodolistService, private HS: HistoryService<TodoList>, private db: AngularFirestore) { 
     this.obsToDo=this.toDoService.observable;
     this.obsHistory=this.HS.observable;
 
@@ -37,19 +46,24 @@ export class TodoListComponent implements OnInit {
     // this.obsToDo=this.listDB.doc('id').get();
     // this.listDB.valueChanges();
   
-
   }
 
     //on charge les données a l'abonnement
 
   ngOnInit(): void {
-    this.toDoService.loadData();
-    console.log("onInit");
+    let id ='anon';
+    if(!this.isAnon){
+      id=this.userName+":"+this.userId;
+    }
+    this.toDoService.loadData(id);
+    this.count();
 
     // this.listDB.doc('id').get().then(data =>{
     //   console.log("getId");
     //  this.toDoService.load(data.data() || {label: 'TODO', items: [] })}).unsubscribe();
-    this.count();
+    // this.count();
+
+    
 
   }
 
@@ -65,11 +79,16 @@ export class TodoListComponent implements OnInit {
   private saveState(){
     // var username: string;
     // this.auth.user.subscribe(data =>{ 'id'=data?.displayName != null }).unsubscribe;
-      this.obsToDo.subscribe(data=>{
-        this.listDB.doc('id').set(data);
-        localStorage.setItem('data',JSON.stringify(data));
-        this.HS.push(data);
-      }).unsubscribe();
+    let id ='anon';
+    if(!this.isAnon){
+      id=this.userName+":"+this.userId;
+      console.log("id: "+id);
+    }
+    this.obsToDo.subscribe(data=>{
+      this.listDB.doc(id).set(data);
+      localStorage.setItem('data',JSON.stringify(data));
+      this.HS.push(data);
+    }).unsubscribe();
   }
 
 //   private saveState(){
@@ -79,35 +98,25 @@ export class TodoListComponent implements OnInit {
 //     }).unsubscribe();
 // }
 
-  // //enlever
-  // editable(){
-  //   this.isEditable=!this.isEditable;
-  // }
+
 
     //ajoute un item dans la liste
     add(label: string){
     this.toDoService.create(label);
     this.saveState();
-    this.count();
     // this.afs.collection("items").add(label);
   }
-
-  // saveDB(){
-  //   this.todoDoc=this.afs.doc('todolist');
-  // }
 
   //supprime un item de la liste
   delete(item: TodoItem){
     this.toDoService.delete(item);
     this.saveState();
-    this.count();
   }
 
   //met a jour un item de la liste
   update(data :Partial<TodoItem>,item: TodoItem){
     this.toDoService.update(data, item);
     this.saveState();
-    this.count();
     
   }
   
@@ -122,7 +131,6 @@ export class TodoListComponent implements OnInit {
         localStorage.setItem('data',JSON.stringify(data.current));
       }).unsubscribe();
     }
-    this.count();
 
   }
 
@@ -141,13 +149,14 @@ export class TodoListComponent implements OnInit {
         localStorage.setItem('data',JSON.stringify(data.current));
       }).unsubscribe();
     }
-    this.count();
 
   }
 
   //recupere la liste des items, compte le nombre ditem restant avec un reduce puis se desabonne
   count(){
-    this.obsToDo.subscribe(data=>this.remaining=data.items.reduce((acc, item)=>(!item.isDone)?acc+1:acc,0)).unsubscribe();
+    // this.obsToDo.subscribe(data=>this.remaining=data.items.reduce((acc, item)=>(!item.isDone)?acc+1:acc,0)).unsubscribe();
+    this.obsToDo.subscribe(data=>this.countRemaining.next(data.items.reduce((acc, item)=>(!item.isDone)?acc+1:acc,0)));
+
   }
   //en cours d'edition ou pas
   changeEdit(isEditing: boolean, item: TodoItem){
@@ -190,13 +199,11 @@ export class TodoListComponent implements OnInit {
         item => {if(item.isDone){this.toDoService.delete(item)}
           })).unsubscribe();
 
-  this.count();
   this.saveState();
   }
 
   checkAll(items: readonly TodoItem[]){
     this.toDoService.update({isDone:true}, ...items);
-    this.count();
     this.saveState();
 
 

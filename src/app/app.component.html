@@ -3,7 +3,7 @@
     <img [src]="user.photoURL" class="img-fluid|thumbnail rounded-top|rounded-end|rounded-bottom|rounded-start|rounded-circle|" alt="">
     <br>
     <button (click)="logout()">Logout</button>
-    <app-todo-list></app-todo-list>
+    <app-todo-list [userName]="user.displayName || ''" [userId]="user.uid" [isAnon]="user.isAnonymous"></app-todo-list>
   </div>
   <ng-template #showLogin>
     <p>Please login.</p>

@@ -28,12 +28,12 @@ export class TodolistService {
   private dbPath='/todoList';
   listDB!: AngularFirestoreCollection<TodoList>;
 
-  // toto!: Observable<any[]>;
 
   constructor(private db: AngularFirestore) {
     this.listDB=db.collection(this.dbPath);
     // this.toto=db.collection(this.dbPath).valueChanges();
   }
+
 
   //load pour ctrlz 
   load(data: TodoList){
@@ -41,7 +41,7 @@ export class TodolistService {
   }
 
   //retrieve data from firestore
-  loadData(){
+  loadData(id: string){
 // on reprend les données enregistrées dans le localStorage puis
     // on les envoie dans le behaviour subjecteur 
     // var retrievedData=localStorage.getItem('data');
@@ -52,25 +52,20 @@ export class TodolistService {
     this.listDB.snapshotChanges().pipe(
       map(changes =>
         changes.map(
-          c => ({...c.payload.doc.data()})
+          c => ({id: c.payload.doc.id,...c.payload.doc.data()})
         )
         )
     ).subscribe(data => {
       data.forEach(
         a => {
-          if(a.label=='TODO'){
+          if(a.id==id){
             this.subj.next(a);
           }
         }
       )
      } );
 
-   
 
-    // doc.data().
-    // // // let data:T;
-
-    console.log("loaddata");
     // this.listDB.doc('id').get().subscribe(donne =>{
     //   console.log("ttteeeeeest");
     //     console.log("firestore: "+donne.data()?.label);

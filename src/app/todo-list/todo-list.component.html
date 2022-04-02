@@ -18,7 +18,9 @@
         </ul>
     </section>
     <footer class="footer">
-        <span class="todo-count"><strong></strong> {{remaining}} restantes</span>
+        <!-- <span class="todo-count"><strong></strong> {{remaining}} restantes</span> -->
+        <span *ngIf="countRemaining | async as nrest" class="todo-count"><strong></strong> {{nrest}} restantes</span>
+        
         <ul class="filters">
             <li>
                 <a (click)="filterAll()" class="filterAll">Tous</a>
