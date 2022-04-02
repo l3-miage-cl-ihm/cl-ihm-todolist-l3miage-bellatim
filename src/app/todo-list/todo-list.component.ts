@@ -1,4 +1,6 @@
 import { Component, OnInit, ChangeDetectionStrategy, HostListener } from '@angular/core';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import {AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from '@angular/fire/compat/firestore';
 import { Observable } from 'rxjs';
 import { HistoryService, History } from '../history.service';
 import { TodoItem, TodoList, TodolistService } from '../todolist.service';
@@ -22,15 +24,31 @@ export class TodoListComponent implements OnInit {
   showAll=true;
   showDone=false;
   showActive=false;
-  constructor(private toDoService: TodolistService, private HS: HistoryService<TodoList>) { 
+
+
+  //sauvegarder avec document  nom auth
+  // private todoDoc!: AngularFirestoreDocument<TodoList>; , private afs: AngularFirestore
+  listDB!: AngularFirestoreCollection<TodoList>;
+  constructor(private auth: AngularFireAuth,private toDoService: TodolistService, private HS: HistoryService<TodoList>, private db: AngularFirestore) { 
     this.obsToDo=this.toDoService.observable;
     this.obsHistory=this.HS.observable;
+
+    this.listDB=db.collection('/todoList');
+    // this.obsToDo=this.listDB.doc('id').get();
+    // this.listDB.valueChanges();
+  
+
   }
 
     //on charge les données a l'abonnement
 
   ngOnInit(): void {
     this.toDoService.loadData();
+    console.log("onInit");
+
+    // this.listDB.doc('id').get().then(data =>{
+    //   console.log("getId");
+    //  this.toDoService.load(data.data() || {label: 'TODO', items: [] })}).unsubscribe();
     this.count();
 
   }
@@ -45,11 +63,21 @@ export class TodoListComponent implements OnInit {
 
   //on s'abonne a l'observable pour pouvoir le mettre dans le localStorage, push dans l'historique et unsubscribe pour eviter les doublons
   private saveState(){
+    // var username: string;
+    // this.auth.user.subscribe(data =>{ 'id'=data?.displayName != null }).unsubscribe;
       this.obsToDo.subscribe(data=>{
+        this.listDB.doc('id').set(data);
         localStorage.setItem('data',JSON.stringify(data));
         this.HS.push(data);
       }).unsubscribe();
   }
+
+//   private saveState(){
+//     this.obsToDo.subscribe(data=>{
+//       localStorage.setItem('data',JSON.stringify(data));
+//       this.HS.push(data);
+//     }).unsubscribe();
+// }
 
   // //enlever
   // editable(){
@@ -61,7 +89,12 @@ export class TodoListComponent implements OnInit {
     this.toDoService.create(label);
     this.saveState();
     this.count();
+    // this.afs.collection("items").add(label);
   }
+
+  // saveDB(){
+  //   this.todoDoc=this.afs.doc('todolist');
+  // }
 
   //supprime un item de la liste
   delete(item: TodoItem){

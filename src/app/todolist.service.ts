@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
+import { BehaviorSubject, Observable, map } from 'rxjs';
 
 export interface TodoItem {
   readonly label: string;
@@ -19,27 +20,70 @@ let idItem = 0;
   providedIn: 'root'
 })
 export class TodolistService {
+
+  
   private subj = new BehaviorSubject<TodoList>({label: 'TODO', items: [] });
   readonly observable = this.subj.asObservable();
 
+  private dbPath='/todoList';
+  listDB!: AngularFirestoreCollection<TodoList>;
 
-  constructor() {
+  // toto!: Observable<any[]>;
+
+  constructor(private db: AngularFirestore) {
+    this.listDB=db.collection(this.dbPath);
+    // this.toto=db.collection(this.dbPath).valueChanges();
   }
 
+  //load pour ctrlz 
   load(data: TodoList){
     this.subj.next(data);
   }
 
+  //retrieve data from firestore
   loadData(){
 // on reprend les données enregistrées dans le localStorage puis
     // on les envoie dans le behaviour subjecteur 
-    var retrievedData=localStorage.getItem('data');
-    if(retrievedData){
-      this.subj.next(JSON.parse(retrievedData));
-    }
+    // var retrievedData=localStorage.getItem('data');
+    // if(retrievedData){
+    //   this.subj.next(JSON.parse(retrievedData));
+    // }
+
+    this.listDB.snapshotChanges().pipe(
+      map(changes =>
+        changes.map(
+          c => ({...c.payload.doc.data()})
+        )
+        )
+    ).subscribe(data => {
+      data.forEach(
+        a => {
+          if(a.label=='TODO'){
+            this.subj.next(a);
+          }
+        }
+      )
+     } );
+
+   
+
+    // doc.data().
+    // // // let data:T;
+
+    console.log("loaddata");
+    // this.listDB.doc('id').get().subscribe(donne =>{
+    //   console.log("ttteeeeeest");
+    //     console.log("firestore: "+donne.data()?.label);
+    //     this.subj.next(donne.data() || {label: 'TODO', items: [] } )
+    //   // }
+    // });
+
+    
+    
   }
 
   create(...labels: readonly string[]): this {
+
     const L: TodoList = this.subj.value;
     this.subj.next( {
       ...L,
@@ -51,6 +95,8 @@ export class TodolistService {
           )
       ]
     } );
+
+    // this.listRef.doc('id').set(this.subj.value);
     return this;
   }
 
@@ -60,6 +106,7 @@ export class TodolistService {
       ...L,
       items: L.items.filter(item => items.indexOf(item) === -1 )
     } );
+    // this.listRef.doc('id').set(this.subj.value);
     return this;
   }
 
@@ -74,6 +121,7 @@ export class TodolistService {
     } else {
       this.delete(...items);
     }
+    // this.listRef.doc('id').set(this.subj.value);
     return this;
   }
 

@@ -1,7 +1,7 @@
 <section class="todoapp">
     <header class="header">
         <h1 *ngIf="obsToDo | async as TD">{{TD.label}}</h1>
-        <form (keyup.enter)="add(lab.value)">
+        <form  (keydown.enter)="add(lab.value)">
             <input name="newTodoInput" class="new-todo" placeholder="Que faire?" autofocus #lab />
         </form>
     </header>
