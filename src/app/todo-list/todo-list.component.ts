@@ -37,6 +37,7 @@ export class TodoListComponent implements OnInit {
   @Input() userId!: string;
   @Input() isAnon!: boolean;
 
+  @Input() listId='';
 
   constructor(private toDoService: TodolistService, private HS: HistoryService<TodoList>, private db: AngularFirestore) { 
     this.obsToDo=this.toDoService.observable;
@@ -48,6 +49,26 @@ export class TodoListComponent implements OnInit {
   
   }
 
+  saveLocalFilters(){
+    localStorage.setItem('showAll',JSON.stringify(this.showAll));
+    localStorage.setItem('showDone',JSON.stringify(this.showDone));
+    localStorage.setItem('showActive',JSON.stringify(this.showActive));
+  }
+
+  loadLocalFilters(){
+    let retrievedFilter = localStorage.getItem('showAll');
+    if(retrievedFilter){
+      this.showAll=(JSON.parse(retrievedFilter));
+    }
+    retrievedFilter = localStorage.getItem('showDone');
+    if(retrievedFilter){
+      this.showDone=(JSON.parse(retrievedFilter));
+    }
+    retrievedFilter = localStorage.getItem('showActive');
+    if(retrievedFilter){
+      this.showActive=(JSON.parse(retrievedFilter));
+    }
+  }
     //on charge les données a l'abonnement
 
   ngOnInit(): void {
@@ -57,13 +78,13 @@ export class TodoListComponent implements OnInit {
     }
     this.toDoService.loadData(id);
     this.count();
+    this.loadLocalFilters();
 
     // this.listDB.doc('id').get().then(data =>{
     //   console.log("getId");
     //  this.toDoService.load(data.data() || {label: 'TODO', items: [] })}).unsubscribe();
     // this.count();
 
-    
 
   }
 
@@ -86,7 +107,7 @@ export class TodoListComponent implements OnInit {
     }
     this.obsToDo.subscribe(data=>{
       this.listDB.doc(id).set(data);
-      localStorage.setItem('data',JSON.stringify(data));
+      // localStorage.setItem('data',JSON.stringify(data));
       this.HS.push(data);
     }).unsubscribe();
   }
@@ -171,6 +192,7 @@ export class TodoListComponent implements OnInit {
       this.showActive=false;
       this.showDone=false;
     }
+    this.saveLocalFilters();
   }
 
   //on met show a false aux item done
@@ -180,6 +202,8 @@ export class TodoListComponent implements OnInit {
       this.showAll=false;
       this.showDone=false;
     }
+    this.saveLocalFilters();
+
   }
 
   //on met show a true aux item done
@@ -189,9 +213,7 @@ export class TodoListComponent implements OnInit {
       this.showAll=false;
       this.showActive=false;
     }
-
-    
-
+    this.saveLocalFilters();
   }
 
   deleteDone(){

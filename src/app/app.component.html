@@ -1,9 +1,13 @@
 <div *ngIf="auth.user | async as user; else showLogin">
-    <h1>Hello {{ user.displayName }}!</h1>
+    <h1 *ngIf="!user.isAnonymous; else anon ">Bonjour {{ user.displayName }}!</h1>
+    <ng-template #anon>
+      <h1 #anon> Bonjour, la liste est partagée avec tous les anononymes</h1>
+    </ng-template>
     <img [src]="user.photoURL" class="img-fluid|thumbnail rounded-top|rounded-end|rounded-bottom|rounded-start|rounded-circle|" alt="">
     <br>
     <button (click)="logout()">Logout</button>
-    <app-todo-list [userName]="user.displayName || ''" [userId]="user.uid" [isAnon]="user.isAnonymous"></app-todo-list>
+    <!-- <app-selection (idList)="idList=$event" [userName]="user.displayName || ''" [userId]="user.uid" [isAnon]="user.isAnonymous"></app-selection> -->
+    <app-todo-list  [listId]="idList" [userName]="user.displayName || ''" [userId]="user.uid" [isAnon]="user.isAnonymous"></app-todo-list>
   </div>
   <ng-template #showLogin>
     <p>Please login.</p>

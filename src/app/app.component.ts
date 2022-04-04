@@ -14,6 +14,7 @@ import firebase from 'firebase/compat/app';
 export class AppComponent {
   title = 'l3m-tpX-todolist-angular-y2022';  
   userId = 'id';
+  idList = '';
   constructor(public auth: AngularFireAuth){
   }
 
@@ -27,6 +28,10 @@ export class AppComponent {
   }
   logout() {
     this.auth.signOut();
+  }
+
+  changeList(){
+    
   }
  
 
