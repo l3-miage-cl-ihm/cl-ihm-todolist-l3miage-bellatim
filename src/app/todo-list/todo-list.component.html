@@ -4,9 +4,13 @@
         <form  (keydown.enter)="add(lab.value)">
             <input name="newTodoInput" class="new-todo" placeholder="Que faire?" autofocus #lab />
         </form>
+        <a [href]="downloadUri" title="Download JSON" download="todo.json" >Telecharger cette liste</a>
     </header>
     <section class="main">
-        <input class="toggle-all" type="checkbox" name="toggleAll" [checked]="remaining==0" />
+        <input *ngIf="countRemaining | async as nrest; else unchecked" class="toggle-all" type="checkbox" name="toggleAll"  />
+        <ng-template #unchecked>
+            <input  class="toggle-all" type="checkbox" name="toggleAll" checked />
+        </ng-template>
         <label *ngIf="obsToDo | async as TD " (click)="checkAll(TD.items)" for="toggleAll" >Mark all as complete</label>
         <ul class="todo-list" *ngIf="obsToDo | async as TD">
             <li *ngFor="let item of TD.items, let i = index; trackBy: trackByFn" [class.completed]="item.isDone"
@@ -19,17 +23,19 @@
     </section>
     <footer class="footer">
         <!-- <span class="todo-count"><strong></strong> {{remaining}} restantes</span> -->
-        <span *ngIf="countRemaining | async as nrest" class="todo-count"><strong></strong> {{nrest}} restantes</span>
-        
-        <ul class="filters">
+        <span *ngIf="countRemaining | async as nrest; else zero" class="todo-count"><strong> {{nrest}} restantes</strong></span>
+        <ng-template #zero>
+            <span class="todo-count">Il ne reste plus de tache.</span>
+        </ng-template>
+            <ul class="filters">
             <li>
-                <a (click)="filterAll()" class="filterAll">Tous</a>
+                <a (click)="filterAll()" class="filterAll" [class.selected]="showAll">Tous</a>
             </li>
             <li>
-                <a (click)="filterActive()" class="filterActives">Actifs</a>
+                <a (click)="filterActive()" class="filterActives" [class.selected]="showActive">Actifs</a>
             </li>
             <li>
-                <a (click)="filterDone()" class="filterCompleted">Complétés</a>
+                <a (click)="filterDone()" class="filterCompleted" [class.selected]="showDone">Complétés</a>
             </li>
         </ul>
         <button (click)="deleteDone()" class="clear-completed">Supprimer cochées</button>

@@ -1,6 +1,9 @@
-<select *ngIf="obsList | async as L" matNativeControl id="mySelectId">
-    <option (click)="changeList(item.id)" *ngFor="let item of L; let i = index" [value]="item.id">{{item.id.replace(userId,i+1)}}</option>
-</select>
+<!-- <select *ngIf="obsList | async as L" matNativeControl id="mySelectId"> -->
+    <!-- <option (click)= *ngFor="let item of L; let i = index" [value]="item.id">{{item.id.replace(userId,i+1)}}</option> -->
+<!-- </select> -->
 <br>
-<button (click)="newList()"> creet Nouvelle liste</button>
-
+<ul  *ngIf="obsList | async as L">
+    <h2>Vos autres listes</h2>
+    <li *ngFor="let item of L; let i = index" > <a class="other-lists" (click)="changeList(item.id)">{{item.id}}</a></li>
+</ul>
+<button (click)="newList()" class="btn"> creer Nouvelle liste</button>

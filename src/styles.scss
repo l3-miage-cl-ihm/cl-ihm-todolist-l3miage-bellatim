@@ -1,5 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
 /* You can add global styles to this file, and also import other style files */
+// @import "~bootstrap/dist/css/bootstrap.css";
+
+
 html,
 body {
   margin: 0;
@@ -378,3 +381,21 @@ html .clear-completed:active {
     bottom: 10px;
   }
 }
+
+.other-lists{
+  color: inherit;
+  margin: 3px;
+  padding: 3px 7px;
+  text-decoration: none;
+  border: 1px solid transparent;
+  border-radius: 3px;
+}
+
+.other-lists:hover {
+  border-color: rgba(175, 47, 47, 0.1);
+}
+
+.other-lists.selected {
+  border-color: rgba(175, 47, 47, 0.2);
+}
+

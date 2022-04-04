@@ -49,6 +49,7 @@ export class SelectionComponent implements OnInit {
   changeList(lala:string){
     console.log(lala);
     this.idList.emit(lala);
+    
   }
   
 

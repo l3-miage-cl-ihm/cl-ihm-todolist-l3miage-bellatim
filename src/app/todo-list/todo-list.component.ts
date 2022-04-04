@@ -1,6 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy, HostListener, Input } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import {AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from '@angular/fire/compat/firestore';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { HistoryService, History } from '../history.service';
 import { TodoItem, TodoList, TodolistService } from '../todolist.service';
@@ -41,7 +42,7 @@ export class TodoListComponent implements OnInit {
 
   subscribed=false;
 
-  constructor(private toDoService: TodolistService, private HS: HistoryService<TodoList>, private db: AngularFirestore) { 
+  constructor(private sanitizer: DomSanitizer, private toDoService: TodolistService, private HS: HistoryService<TodoList>, private db: AngularFirestore) { 
     this.obsToDo=this.toDoService.observable;
     this.obsHistory=this.HS.observable;
 
@@ -51,6 +52,32 @@ export class TodoListComponent implements OnInit {
   
   }
 
+  downloadUri!:SafeUrl;
+
+  exportList(){
+    let exportedData!:string;
+
+    let id ='anon';
+    if(!this.isAnon){
+      id=this.userName+":"+this.userId;
+      console.log("id: "+id);
+    }
+    this.toDoService.observable.subscribe(data=>{
+      exportedData = JSON.stringify(data);
+      console.log("exporting");
+    }).unsubscribe();
+
+    var uri = this.sanitizer.bypassSecurityTrustUrl("data:text/json;charset=UTF-8," + encodeURIComponent(exportedData));
+    this.downloadUri = uri;
+  }
+
+  importList(){
+
+  }
+
+  generateQRcode(){
+    
+  }
   saveLocalFilters(){
     localStorage.setItem('showAll',JSON.stringify(this.showAll));
     localStorage.setItem('showDone',JSON.stringify(this.showDone));
@@ -86,7 +113,12 @@ export class TodoListComponent implements OnInit {
     //   console.log("getId");
     //  this.toDoService.load(data.data() || {label: 'TODO', items: [] })}).unsubscribe();
     // this.count();
+    this.countRemaining.subscribe(remains => this.remaining=remains);
+    this.exportList();
 
+  }
+
+  ngOnDestroy(){
 
   }
 
@@ -236,8 +268,14 @@ export class TodoListComponent implements OnInit {
   this.saveState();
   }
 
+  
+  //Check tous les items (ou deselectionne si il le sont déjà)
   checkAll(items: readonly TodoItem[]){
-    this.toDoService.update({isDone:true}, ...items);
+    let allChecked!:boolean;
+    this.countRemaining.subscribe(i => {
+      allChecked=(i==0);
+    }).unsubscribe;
+    this.toDoService.update({isDone:!allChecked}, ...items);
     this.saveState();
 
 
