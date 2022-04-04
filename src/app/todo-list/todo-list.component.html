@@ -4,8 +4,10 @@
         <form  (keydown.enter)="add(lab.value)">
             <input name="newTodoInput" class="new-todo" placeholder="Que faire?" autofocus #lab />
         </form>
-        <a [href]="downloadUri" title="Download JSON" download="todo.json" >Telecharger cette liste</a>
+        <a (click)="exportList()" [href]="downloadUri" title="Download JSON" download="todo.json" >Telecharger cette liste</a>
+        <span>| Importer liste: </span><input type="file" class="form-control" id="file" (change)="importList($event)" />
     </header>
+
     <section class="main">
         <input *ngIf="countRemaining | async as nrest; else unchecked" class="toggle-all" type="checkbox" name="toggleAll"  />
         <ng-template #unchecked>

@@ -49,12 +49,13 @@ export class TodoListComponent implements OnInit {
     this.listDB=db.collection('/todoList');
     // this.obsToDo=this.listDB.doc('id').get();
     // this.listDB.valueChanges();
-  
   }
 
   downloadUri!:SafeUrl;
 
   exportList(){
+    
+
     let exportedData!:string;
 
     let id ='anon';
@@ -63,6 +64,7 @@ export class TodoListComponent implements OnInit {
       console.log("id: "+id);
     }
     this.toDoService.observable.subscribe(data=>{
+      localStorage.setItem('data',JSON.stringify(data));
       exportedData = JSON.stringify(data);
       console.log("exporting");
     }).unsubscribe();
@@ -71,8 +73,23 @@ export class TodoListComponent implements OnInit {
     this.downloadUri = uri;
   }
 
-  importList(){
-
+  importList(file: any){
+    let selectedFile = file.target.files[0];
+    const fileReader = new FileReader();
+    fileReader.readAsText(selectedFile, "UTF-8");
+    fileReader.onload = () => {
+    //console.log(fileReader.result.toString());
+    if(fileReader.result){
+      let jsonObj=(JSON.parse(fileReader.result.toString()));
+      console.log("lecture fichier"+jsonObj);
+      this.toDoService.load(jsonObj);
+      this.saveData(jsonObj);
+    }
+    }
+    fileReader.onerror = (error) => {
+    console.log(error);
+    alert("Erreur fichier")
+    }
   }
 
   generateQRcode(){
@@ -114,7 +131,6 @@ export class TodoListComponent implements OnInit {
     //  this.toDoService.load(data.data() || {label: 'TODO', items: [] })}).unsubscribe();
     // this.count();
     this.countRemaining.subscribe(remains => this.remaining=remains);
-    this.exportList();
 
   }
 
