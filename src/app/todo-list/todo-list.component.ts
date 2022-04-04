@@ -39,6 +39,8 @@ export class TodoListComponent implements OnInit {
 
   @Input() listId='';
 
+  subscribed=false;
+
   constructor(private toDoService: TodolistService, private HS: HistoryService<TodoList>, private db: AngularFirestore) { 
     this.obsToDo=this.toDoService.observable;
     this.obsHistory=this.HS.observable;
@@ -98,6 +100,7 @@ export class TodoListComponent implements OnInit {
 
   //on s'abonne a l'observable pour pouvoir le mettre dans le localStorage, push dans l'historique et unsubscribe pour eviter les doublons
   private saveState(){
+    
     // var username: string;
     // this.auth.user.subscribe(data =>{ 'id'=data?.displayName != null }).unsubscribe;
     let id ='anon';
@@ -109,15 +112,22 @@ export class TodoListComponent implements OnInit {
       this.listDB.doc(id).set(data);
       // localStorage.setItem('data',JSON.stringify(data));
       this.HS.push(data);
+      console.log("saving");
     }).unsubscribe();
+    
   }
 
-//   private saveState(){
-//     this.obsToDo.subscribe(data=>{
-//       localStorage.setItem('data',JSON.stringify(data));
-//       this.HS.push(data);
-//     }).unsubscribe();
-// }
+  saveData(data: TodoList){
+
+    let id ='anon';
+    if(!this.isAnon){
+      id=this.userName+":"+this.userId;
+      console.log("id: "+id);
+    }
+    this.listDB.doc(id).set(data);
+      // localStorage.setItem('data',JSON.stringify(data));
+
+  }
 
 
 
@@ -149,7 +159,8 @@ export class TodoListComponent implements OnInit {
       this.HS.undo();
       this.obsHistory.subscribe(data=>{
         this.toDoService.load(data.current);
-        localStorage.setItem('data',JSON.stringify(data.current));
+        // localStorage.setItem('data',JSON.stringify(data.current));
+        this.saveData(data.current);
       }).unsubscribe();
     }
 
@@ -167,7 +178,8 @@ export class TodoListComponent implements OnInit {
       this.HS.redo();
       this.obsHistory.subscribe(data=>{
         this.toDoService.load(data.current);
-        localStorage.setItem('data',JSON.stringify(data.current));
+        // localStorage.setItem('data',JSON.stringify(data.current));
+        this.saveData(data.current);
       }).unsubscribe();
     }
 
