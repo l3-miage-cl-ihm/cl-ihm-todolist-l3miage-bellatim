@@ -86,11 +86,11 @@
         <li  *ngFor="let item of L; let i = index" > 
             <a  [class.selected]="i==selected" class="other-lists" (click)="changeList(item.id, i)">{{item.label}}</a>
             <!-- <a  [class.selected]="i==selected" class="other-lists" (click)="changeList(item.id, i)">{{item.id.replace(userId,'')}}, {{item.label}}</a> -->
-            <a (click)="deleteList(item)"> supprimer liste</a>
+            <a (click)="deleteList(item)" class="delete"> supprimer liste</a>
         </li>
     </ul>
     <!-- nouvelle liste: neo rencontre l'architecte-->
-    <a (click)="newList()" class="new-list" style="margin: 15pox;text-align: center"> Creer nouvelle liste</a>
+    <a (click)="newList()" class="new-list" > Creer nouvelle liste</a>
 </section>
 
   <!-- changement label  -->

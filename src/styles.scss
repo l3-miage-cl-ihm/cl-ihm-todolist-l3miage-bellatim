@@ -429,3 +429,32 @@ html .clear-completed:active {
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2),
   0 25px 50px 0 rgba(0, 0, 0, 0.1);
 }
+
+.logout,
+html .logout:active {
+  padding-bottom: 10%;
+  float: left;
+  position: relative;
+  line-height: 20px;
+  text-decoration: none;
+  cursor: pointer;
+  font-size: large;
+}
+
+.new-list:hover,
+.delete:hover,
+.logout:hover {
+  text-decoration: underline;
+}
+
+.delete {
+  float:right;
+  padding-right: 2%;
+}
+
+.new-list {
+  padding-bottom:15em;
+  padding-left: 25%;
+  float:center;
+  position: relative;
+}

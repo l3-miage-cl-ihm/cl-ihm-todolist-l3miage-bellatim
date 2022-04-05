@@ -5,7 +5,7 @@
     </ng-template>
     <img [src]="user.photoURL" class="img-fluid|thumbnail rounded-top|rounded-end|rounded-bottom|rounded-start|rounded-circle|" alt="">
     <br>
-    <button (click)="logout()">Logout</button>
+    <button (click)="logout()" class="logout">Logout</button>
     <app-todo-list  [userName]="user.displayName || ''" [userId]="user.uid" [isAnon]="user.isAnonymous"></app-todo-list>
     <!-- <app-selection (idList)="idList=$event" [userName]="user.displayName || ''" [userId]="user.uid" [isAnon]="user.isAnonymous"></app-selection> -->
   </div>
