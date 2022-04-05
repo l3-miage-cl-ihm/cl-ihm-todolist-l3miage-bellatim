@@ -28,7 +28,7 @@ export class SelectionComponent implements OnInit {
     this.obsList=this.listDB.snapshotChanges().pipe(
       map(changes =>
         changes.map(
-          c => ({id: c.payload.doc.id})
+          c => ({id: c.payload.doc.id,label:c.payload.doc.data().label})
         ).filter(c => c.id.includes(this.userName))
         ));
     // ).subscribe(data => {

@@ -28,6 +28,12 @@ export class TodoListComponent implements OnInit {
   showActive=false;
 
 
+  /**Limitations:
+   * L'application bug quand on fait ctrl z on ctrly
+   * pour annuler ou revenir en vant lorsqu'on a changé
+   * de liste
+   */
+
   //sauvegarder avec document  nom auth
   // private todoDoc!: AngularFirestoreDocument<TodoList>; , private afs: AngularFirestore
   listDB!: AngularFirestoreCollection<TodoList>;
@@ -52,6 +58,11 @@ export class TodoListComponent implements OnInit {
     // this.listDB.valueChanges();
   }
 
+
+  //charge la premiere liste de l'utilisateur
+  //puis s'abonne au compteurs
+  //et charge les noms de liste de l'utilisateur
+  //on derivant un abonnement depuis le service firestore
   ngOnInit(): void {
     let id ='anon';
     if(!this.isAnon){
@@ -72,7 +83,7 @@ export class TodoListComponent implements OnInit {
     this.obsList=this.listDB.snapshotChanges().pipe(
       map(changes =>
         changes.map(
-          c => ({id: c.payload.doc.id})
+          c => ({id: c.payload.doc.id,label:c.payload.doc.data().label})
         ).filter(c => c.id.includes(this.userName))
         ), share());
     this.countList();
@@ -81,6 +92,7 @@ export class TodoListComponent implements OnInit {
 
   downloadUri!:SafeUrl;
 
+  //exxporter une liste en JSON
   exportList(){
     
 
@@ -101,6 +113,7 @@ export class TodoListComponent implements OnInit {
     this.downloadUri = uri;
   }
 
+  //importer une liste JSON
   importList(file: any){
     let selectedFile = file.target.files[0];
     const fileReader = new FileReader();
@@ -124,12 +137,15 @@ export class TodoListComponent implements OnInit {
   generateQRcode(){
     
   }
+
+  //sauvegarde les files de manière locale
   saveLocalFilters(){
     localStorage.setItem('showAll',JSON.stringify(this.showAll));
     localStorage.setItem('showDone',JSON.stringify(this.showDone));
     localStorage.setItem('showActive',JSON.stringify(this.showActive));
   }
 
+  //charge les filtres (de manière locale)
   loadLocalFilters(){
     let retrievedFilter = localStorage.getItem('showAll');
     if(retrievedFilter){
@@ -217,6 +233,7 @@ export class TodoListComponent implements OnInit {
     
   }
   
+  //undo
   annuler(){
     var canUndo=false;
     var currentIndex=0;
@@ -232,6 +249,7 @@ export class TodoListComponent implements OnInit {
 
   }
 
+  //redo
   refaire(){
     var currentIndex=0;
     var length=0;
@@ -294,6 +312,7 @@ export class TodoListComponent implements OnInit {
     this.saveLocalFilters();
   }
 
+  //supprime les items selectionnés
   deleteDone(){
     this.obsToDo.subscribe(data => data.items.forEach(
         item => {if(item.isDone){this.toDoService.delete(item)}
@@ -329,6 +348,7 @@ export class TodoListComponent implements OnInit {
    listNb=0;
 
 
+  //compte le nombre de liste de l'utiliasteur
   countList(){
     this.obsList.subscribe(data => {this.listNb=data.length
       // this.listNb=data.reduce((acc:number)=>(acc));
@@ -343,6 +363,7 @@ export class TodoListComponent implements OnInit {
  //premiere liste c'est nom: uid
  //si index=0 c'est la premiere
  //si index=1
+   this.toDoService.reinit();
     console.log(this.listNb.toString());
     let id ='anon';
     this.idList=this.listNb.toString();
@@ -355,19 +376,39 @@ export class TodoListComponent implements OnInit {
     this.loadLocalFilters();
     this.countRemaining.subscribe(remains => this.remaining=remains);
     // this.idList.emit(this.listNb.toString());
+
+    this.selected=this.listNb;
   }
 
   //change de liste
   selected=0;
   changeList(id:string, i:number){
+    //il faut veilleur a change l'id
+    // let id='anon'
+    this.toDoService.reinit();
+    this.selected=i;
     console.log("chargement "+id);
     // this.idList.emit(lala);
+    this.idList=i.toString()=='0'?'':i.toString();
+    console.log("idlist"+this.idList);
     this.toDoService.loadData(id);
-    this.selected=i;
+
+    //le bug c'est de faire selectonner direct au changement ?
   }
 
+  //utilisé pour determiner si une liste est selectionné
+  //pour le css
   isSelected(index: number):boolean{
     return index==this.selected;
   }
+
+  updateLabel(label: string){
+    this.toDoService.updateLabel(label);
+    this.saveState();
+  }
+
+ 
+  
+
 
 }

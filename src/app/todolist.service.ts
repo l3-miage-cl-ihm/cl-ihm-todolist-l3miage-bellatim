@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
-import { BehaviorSubject, Observable, map } from 'rxjs';
+import { BehaviorSubject, Observable, map, share } from 'rxjs';
 
 export interface TodoItem {
   readonly label: string;
@@ -41,6 +41,24 @@ export class TodolistService {
     this.subj.next(data);
   }
 
+  loadDataInit(id:string){
+    this.listDB.snapshotChanges().pipe(
+      map(changes =>
+        changes.map(
+          c => ({id: c.payload.doc.id,...c.payload.doc.data()})
+        )
+        )
+    ,share()).subscribe(data => {
+      data.forEach(
+        a => {console.log("load");
+          if(a.id==id){
+            this.subj.next({label:a.label, items: a.items});
+          }
+        }
+      )
+     } ).unsubscribe();
+
+  }
   //retrieve data from firestore
   loadData(id: string){
 // on reprend les données enregistrées dans le localStorage puis
@@ -56,11 +74,11 @@ export class TodolistService {
           c => ({id: c.payload.doc.id,...c.payload.doc.data()})
         )
         )
-    ).subscribe(data => {
+    ,share()).subscribe(data => {
       data.forEach(
-        a => {
+        a => {console.log("load");
           if(a.id==id){
-            this.subj.next(a);
+            this.subj.next({label:a.label, items: a.items});
           }
         }
       )
@@ -76,6 +94,21 @@ export class TodolistService {
 
     
     
+  }
+
+  updateLabel(title:string){
+      const L = this.subj.value;
+      this.subj.next( {...L,label:title
+        // ...L,
+        // items: L.items.map( item => items.indexOf(item) >= 0 ? {...item, ...data} : item )
+      } );
+   
+    // this.listRef.doc('id').set(this.subj.value);
+    return this;
+  }
+
+  reinit(){
+    this.subj.next({label:'',items:[]});
   }
 
   create(...labels: readonly string[]): this {

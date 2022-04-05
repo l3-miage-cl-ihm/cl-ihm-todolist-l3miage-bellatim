@@ -1,25 +1,41 @@
+<form  (keydown.enter)="updateLabel(title.value); title.value=''">
+    <input #newTextInput name="newTextInput" class="editTitle" placeholder="nouveau titre de liste" autofocus #title />
+</form>
 <section class="todoapp">
+  
     <header class="header">
+        <!-- changer le nom de la liste -->
+       
+
+        <!-- affivhage nom de liste -->
         <h1 *ngIf="obsToDo | async as TD">{{TD.label}}</h1>
-        <form  (keydown.enter)="add(lab.value)">
+
+        <!-- ajouter un item -->
+        <form  (keydown.enter)="add(lab.value); lab.value='' ">
             <input name="newTodoInput" class="new-todo" placeholder="Que faire?" autofocus #lab />
         </form>
+
+        <!-- export/imprt -->
         <a (click)="exportList()" [href]="downloadUri" title="Download JSON" download="todo.json" >Telecharger cette liste</a>
         <span>| Importer liste: </span><input type="file" class="form-control" id="file" (change)="importList($event)" />
     </header>
 
-    <section class="main">
-
-        <input *ngIf="countRemaining | async as nrest; else unchecked" class="toggle-all" type="checkbox" name="toggleAll"  />
+    <!-- <section class="todoapp"> -->
         
+    <!-- </section> -->
+
+    <section class="main">
+        <!-- Bouton de selection (CHECKall) -->
+        <input *ngIf="countRemaining | async as nrest; else unchecked" class="toggle-all" type="checkbox" name="toggleAll"  />
         <ng-template #unchecked>
             <input  class="toggle-all" type="checkbox" name="toggleAll" checked />
         </ng-template>
 
         <label *ngIf="obsToDo | async as TD " (click)="checkAll(TD.items)" for="toggleAll" >Mark all as complete</label>
        
+        <!-- Liste principale -->
         <ul class="todo-list" *ngIf="obsToDo | async as TD">
-           
+            <!-- item -->
             <li *ngFor="let item of TD.items, let i = index; trackBy: trackByFn" [class.completed]="item.isDone"
                 (dblclick)="changeEdit(item.isEditing, item)" (focusout)="changeEdit(true, item) "
                 [class.editing]="item.isEditing">
@@ -33,12 +49,14 @@
   
     <footer class="footer">
         <!-- <span class="todo-count"><strong></strong> {{remaining}} restantes</span> -->
+        <!-- Items restants -->
         <span *ngIf="countRemaining | async as nrest; else zero" class="todo-count"><strong> {{nrest}} restantes</strong></span>
-       
+       <!-- else pas d'item -->
         <ng-template #zero>
             <span class="todo-count">Il ne reste plus de tache.</span>   
         </ng-template>
            
+        <!-- filtres -->
         <ul class="filters">
        
             <li>
@@ -58,13 +76,25 @@
     </footer>
 
 
+
 </section>   
-<section class="todoapp">
-    <br>
+<!-- liste des listes: matrix reloaded -->
+<section class="matrix">
+    
     <ul  *ngIf="obsList | async as L">
         <h2>Vos listes ({{listNb}})</h2>
-        <li  *ngFor="let item of L; let i = index" > <a  [class.selected]="isSelected(i)" class="other-lists" (click)="changeList(item.id, i)">{{item.id.replace(userId,'')}}</a></li>
+        <li  *ngFor="let item of L; let i = index" > <a  [class.selected]="i==selected" class="other-lists" (click)="changeList(item.id, i)">{{item.id.replace(userId,'')}}, {{item.label}}</a></li>
     </ul>
-    
+    <!-- nouvelle liste: neo rencontre l'architecte-->
     <a (click)="newList()" class="new-list" style="margin: 15pox;text-align: center"> Creer nouvelle liste</a>
 </section>
+
+  <!-- changement label  -->
+     <!-- <input *ngIf="obsToDo | async as TD" #newTextInput
+    name      = "newTextInput"
+    class     = "edit"
+    type="text"
+    [ngModel]="TD.label"
+    (ngModelChange)="updateLabel($event)"
+    /> -->
+
