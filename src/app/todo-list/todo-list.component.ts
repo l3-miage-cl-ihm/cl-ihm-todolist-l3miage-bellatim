@@ -364,6 +364,7 @@ export class TodoListComponent implements OnInit {
  //si index=0 c'est la premiere
  //si index=1
    this.toDoService.reinit();
+   this.toDoService.firestoreObs.unsubscribe(); //il faut unsub a chaque changemet sinon on des centianes d'instances qui s'ajoutent
     console.log(this.listNb.toString());
     let id ='anon';
     this.idList=this.listNb.toString();
@@ -386,6 +387,7 @@ export class TodoListComponent implements OnInit {
     //il faut veilleur a change l'id
     // let id='anon'
     this.toDoService.reinit();
+    this.toDoService.firestoreObs.unsubscribe(); //il faut unsub a chaque changemet sinon on des centianes d'instances qui s'ajoutent
     this.selected=i;
     console.log("chargement "+id);
     // this.idList.emit(lala);

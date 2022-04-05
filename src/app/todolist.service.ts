@@ -60,6 +60,8 @@ export class TodolistService {
 
   }
   //retrieve data from firestore
+
+  firestoreObs!:any;
   loadData(id: string){
 // on reprend les données enregistrées dans le localStorage puis
     // on les envoie dans le behaviour subjecteur 
@@ -67,8 +69,8 @@ export class TodolistService {
     // if(retrievedData){
     //   this.subj.next(JSON.parse(retrievedData));
     // }
-
-    this.listDB.snapshotChanges().pipe(
+  
+   this.firestoreObs= this.listDB.snapshotChanges().pipe(
       map(changes =>
         changes.map(
           c => ({id: c.payload.doc.id,...c.payload.doc.data()})
