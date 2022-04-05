@@ -114,7 +114,7 @@ export class TodoListComponent implements OnInit {
   }
 
   //importer une liste JSON
-  importList(file: any){
+  importList(file: any){ //unsub de l'ancien avec de load
     let selectedFile = file.target.files[0];
     const fileReader = new FileReader();
     fileReader.readAsText(selectedFile, "UTF-8");
@@ -342,7 +342,8 @@ export class TodoListComponent implements OnInit {
    }
 
 
-   obsList!: Observable<any>;
+  //  obsList!: Observable<any>;
+   obsList!: Observable<{id:string,label:string}[]>;
 
 
    listNb=0;
@@ -359,15 +360,15 @@ export class TodoListComponent implements OnInit {
   idList='';
 
   //creer une nouvelle liste voir aves les sauvegardes
-  newList(){
+  newList(){ //ajouter index pour selected
  //premiere liste c'est nom: uid
  //si index=0 c'est la premiere
  //si index=1
-   this.toDoService.reinit();
-   this.toDoService.firestoreObs.unsubscribe(); //il faut unsub a chaque changemet sinon on des centianes d'instances qui s'ajoutent
+    this.toDoService.firestoreObs.unsubscribe(); //il faut unsub a chaque changemet sinon on des centianes d'instances qui s'ajoutent
     console.log(this.listNb.toString());
     let id ='anon';
-    this.idList=this.listNb.toString();
+    // this.idList=this.listNb.toString(); //genere un bug quand on supprime liste
+    this.idList=this.randomString();
     if(!this.isAnon){
       // id=this.userName+":"+this.userId+this.listId;
       id=this.userName+":"+this.userId+this.idList;
@@ -386,31 +387,37 @@ export class TodoListComponent implements OnInit {
   changeList(id:string, i:number){
     //il faut veilleur a change l'id
     // let id='anon'
-    this.toDoService.reinit();
     this.toDoService.firestoreObs.unsubscribe(); //il faut unsub a chaque changemet sinon on des centianes d'instances qui s'ajoutent
-    this.selected=i;
-    console.log("chargement "+id);
-    // this.idList.emit(lala);
-    this.idList=i.toString()=='0'?'':i.toString();
-    console.log("idlist"+this.idList);
-    this.toDoService.loadData(id);
+    this.selected=i; //pour le css
+    console.log("chargement "+id); //debug
+    // this.idList=i.toString()=='0'?'':i.toString(); //pour selectionner la bonne liste de l'utilisateur, la premiere etant coposé de son nom met uid
+    this.idList=i.toString()=='0'?'':id.replace(this.userName,'').replace(this.userId,'').replace(':',''); //pour selectionner la bonne liste de l'utilisateur, la premiere etant coposé de son nom met uid
+    console.log("idlist"+this.idList);//debug
+    this.toDoService.loadData(id);//on charge la bonne liste depuis le service
 
-    //le bug c'est de faire selectonner direct au changement ?
   }
 
   //utilisé pour determiner si une liste est selectionné
   //pour le css
+  //a supprimer
   isSelected(index: number):boolean{
     return index==this.selected;
   }
 
+  deleteList(list: {id:string,label:string}){
+    this.listDB.doc(list.id).delete();
+  }
+  
+  //update le nom de liste
   updateLabel(label: string){
     this.toDoService.updateLabel(label);
     this.saveState();
   }
 
  
-  
+  private randomString():string {
+    return Math.random().toString(36).replace(/[^a-z]+/g, '').substring(0, 5);
+  }
 
 
 }

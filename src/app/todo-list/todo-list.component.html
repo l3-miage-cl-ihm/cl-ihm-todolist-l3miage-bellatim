@@ -83,7 +83,11 @@
     
     <ul  *ngIf="obsList | async as L">
         <h2>Vos listes ({{listNb}})</h2>
-        <li  *ngFor="let item of L; let i = index" > <a  [class.selected]="i==selected" class="other-lists" (click)="changeList(item.id, i)">{{item.id.replace(userId,'')}}, {{item.label}}</a></li>
+        <li  *ngFor="let item of L; let i = index" > 
+            <a  [class.selected]="i==selected" class="other-lists" (click)="changeList(item.id, i)">{{item.label}}</a>
+            <!-- <a  [class.selected]="i==selected" class="other-lists" (click)="changeList(item.id, i)">{{item.id.replace(userId,'')}}, {{item.label}}</a> -->
+            <a (click)="deleteList(item)"> supprimer liste</a>
+        </li>
     </ul>
     <!-- nouvelle liste: neo rencontre l'architecte-->
     <a (click)="newList()" class="new-list" style="margin: 15pox;text-align: center"> Creer nouvelle liste</a>

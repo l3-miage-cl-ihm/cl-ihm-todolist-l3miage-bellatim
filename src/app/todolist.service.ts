@@ -59,9 +59,14 @@ export class TodolistService {
      } ).unsubscribe();
 
   }
+
+  //suppression de liste dans firestore
+ 
+
   //retrieve data from firestore
 
   firestoreObs!:any;
+  lastId:number=0;
   loadData(id: string){
 // on reprend les données enregistrées dans le localStorage puis
     // on les envoie dans le behaviour subjecteur 
