@@ -396,6 +396,10 @@ html .clear-completed:active {
 }
 
 .other-lists.selected {
-  border-color: rgba(175, 47, 47, 0.2);
+  color: #925e5ee5;
+  border: 1px solid #4d4d4d;
 }
 
+.new-list{
+  text-align:center;
+}

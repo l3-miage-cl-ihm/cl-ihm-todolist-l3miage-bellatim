@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
-import { map, Observable } from 'rxjs';
+import { BehaviorSubject, map, Observable } from 'rxjs';
 import { TodoItem, TodoList, TodolistService } from '../todolist.service';
 
 @Component({
@@ -19,7 +19,7 @@ export class SelectionComponent implements OnInit {
   listDB!: AngularFirestoreCollection<TodoList>;
 
   obsList!: Observable<any>;
-
+  
   constructor(private db: AngularFirestore) {
     this.listDB=db.collection('/todoList');
   }
@@ -28,7 +28,7 @@ export class SelectionComponent implements OnInit {
     this.obsList=this.listDB.snapshotChanges().pipe(
       map(changes =>
         changes.map(
-          c => ({id: c.payload.doc.id,...c.payload.doc.data()})
+          c => ({id: c.payload.doc.id})
         ).filter(c => c.id.includes(this.userName))
         ));
     // ).subscribe(data => {
@@ -40,16 +40,27 @@ export class SelectionComponent implements OnInit {
     //     }
     //   )
     //  } );
+    this.countList();
+  }
+
+  listNb=0;
+  countList(){
+    this.obsList.subscribe(data => {this.listNb++;
+    });
   }
 
   newList(){
-
+ //premiere liste c'est nom: uid
+ //si index=0 c'est la premiere
+ //si index=1
+    console.log(this.listNb.toString());
+    this.idList.emit(this.listNb.toString());
   }
 
   changeList(lala:string){
     console.log(lala);
     this.idList.emit(lala);
-    
+
   }
   
 

@@ -9,27 +9,38 @@
     </header>
 
     <section class="main">
+
         <input *ngIf="countRemaining | async as nrest; else unchecked" class="toggle-all" type="checkbox" name="toggleAll"  />
+        
         <ng-template #unchecked>
             <input  class="toggle-all" type="checkbox" name="toggleAll" checked />
         </ng-template>
+
         <label *ngIf="obsToDo | async as TD " (click)="checkAll(TD.items)" for="toggleAll" >Mark all as complete</label>
+       
         <ul class="todo-list" *ngIf="obsToDo | async as TD">
+           
             <li *ngFor="let item of TD.items, let i = index; trackBy: trackByFn" [class.completed]="item.isDone"
                 (dblclick)="changeEdit(item.isEditing, item)" (focusout)="changeEdit(true, item) "
                 [class.editing]="item.isEditing">
+               
                 <app-todo-item *ngIf="(!item.isDone && showActive) || (item.isDone && showDone) || (showAll) "
                     [data]="item" (update)="update($event, item)" (remove)="delete($event)"></app-todo-item>
-            </li>
+            
+                </li>
         </ul>
     </section>
+  
     <footer class="footer">
         <!-- <span class="todo-count"><strong></strong> {{remaining}} restantes</span> -->
         <span *ngIf="countRemaining | async as nrest; else zero" class="todo-count"><strong> {{nrest}} restantes</strong></span>
+       
         <ng-template #zero>
-            <span class="todo-count">Il ne reste plus de tache.</span>
+            <span class="todo-count">Il ne reste plus de tache.</span>   
         </ng-template>
-            <ul class="filters">
+           
+        <ul class="filters">
+       
             <li>
                 <a (click)="filterAll()" class="filterAll" [class.selected]="showAll">Tous</a>
             </li>
@@ -38,9 +49,22 @@
             </li>
             <li>
                 <a (click)="filterDone()" class="filterCompleted" [class.selected]="showDone">Complétés</a>
+          
             </li>
         </ul>
+       
         <button (click)="deleteDone()" class="clear-completed">Supprimer cochées</button>
 
     </footer>
+
+
+</section>   
+<section class="todoapp">
+    <br>
+    <ul  *ngIf="obsList | async as L">
+        <h2>Vos listes ({{listNb}})</h2>
+        <li  *ngFor="let item of L; let i = index" > <a  [class.selected]="isSelected(i)" class="other-lists" (click)="changeList(item.id, i)">{{item.id.replace(userId,'')}}</a></li>
+    </ul>
+    
+    <a (click)="newList()" class="new-list" style="margin: 15pox;text-align: center"> Creer nouvelle liste</a>
 </section>

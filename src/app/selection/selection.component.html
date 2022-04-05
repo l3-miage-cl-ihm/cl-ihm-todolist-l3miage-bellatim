@@ -6,4 +6,6 @@
     <h2>Vos autres listes</h2>
     <li *ngFor="let item of L; let i = index" > <a class="other-lists" (click)="changeList(item.id)">{{item.id}}</a></li>
 </ul>
-<button (click)="newList()" class="btn"> creer Nouvelle liste</button>
+
+<button (click)="newList()" class="btn"> Creer nouvelle liste</button>
+<span>{{listNb}}</span>

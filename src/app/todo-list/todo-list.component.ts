@@ -2,7 +2,8 @@ import { Component, OnInit, ChangeDetectionStrategy, HostListener, Input } from 
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import {AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from '@angular/fire/compat/firestore';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { BehaviorSubject, Observable } from 'rxjs';
+// import { stringify } from 'querystring';
+import { BehaviorSubject, map, Observable, share } from 'rxjs';
 import { HistoryService, History } from '../history.service';
 import { TodoItem, TodoList, TodolistService } from '../todolist.service';
 
@@ -38,7 +39,7 @@ export class TodoListComponent implements OnInit {
   @Input() userId!: string;
   @Input() isAnon!: boolean;
 
-  @Input() listId='';
+  // @Input() listId='';
 
   subscribed=false;
 
@@ -49,6 +50,33 @@ export class TodoListComponent implements OnInit {
     this.listDB=db.collection('/todoList');
     // this.obsToDo=this.listDB.doc('id').get();
     // this.listDB.valueChanges();
+  }
+
+  ngOnInit(): void {
+    let id ='anon';
+    if(!this.isAnon){
+      // id=this.userName+":"+this.userId+this.listId;
+      id=this.userName+":"+this.userId;
+    }
+    this.toDoService.loadData(id);
+    this.count();
+    this.loadLocalFilters();
+    this.countRemaining.subscribe(remains => this.remaining=remains);
+
+    // this.listDB.doc('id').get().then(data =>{
+    //   console.log("getId");
+    //  this.toDoService.load(data.data() || {label: 'TODO', items: [] })}).unsubscribe();
+    // this.count();
+
+    //init de selection
+    this.obsList=this.listDB.snapshotChanges().pipe(
+      map(changes =>
+        changes.map(
+          c => ({id: c.payload.doc.id})
+        ).filter(c => c.id.includes(this.userName))
+        ), share());
+    this.countList();
+
   }
 
   downloadUri!:SafeUrl;
@@ -84,6 +112,7 @@ export class TodoListComponent implements OnInit {
       console.log("lecture fichier"+jsonObj);
       this.toDoService.load(jsonObj);
       this.saveData(jsonObj);
+      alert("Fichier importé aves succès");
     }
     }
     fileReader.onerror = (error) => {
@@ -117,22 +146,7 @@ export class TodoListComponent implements OnInit {
   }
     //on charge les données a l'abonnement
 
-  ngOnInit(): void {
-    let id ='anon';
-    if(!this.isAnon){
-      id=this.userName+":"+this.userId;
-    }
-    this.toDoService.loadData(id);
-    this.count();
-    this.loadLocalFilters();
 
-    // this.listDB.doc('id').get().then(data =>{
-    //   console.log("getId");
-    //  this.toDoService.load(data.data() || {label: 'TODO', items: [] })}).unsubscribe();
-    // this.count();
-    this.countRemaining.subscribe(remains => this.remaining=remains);
-
-  }
 
   ngOnDestroy(){
 
@@ -147,13 +161,15 @@ export class TodoListComponent implements OnInit {
   } 
 
   //on s'abonne a l'observable pour pouvoir le mettre dans le localStorage, push dans l'historique et unsubscribe pour eviter les doublons
+  //charge la sauvegarde courante
   private saveState(){
     
     // var username: string;
     // this.auth.user.subscribe(data =>{ 'id'=data?.displayName != null }).unsubscribe;
     let id ='anon';
     if(!this.isAnon){
-      id=this.userName+":"+this.userId;
+      id=this.userName+":"+this.userId+this.idList;
+      // id=this.userName+":"+this.userId; //Save
       console.log("id: "+id);
     }
     this.obsToDo.subscribe(data=>{
@@ -165,11 +181,13 @@ export class TodoListComponent implements OnInit {
     
   }
 
+  //charge une sauvegarde précise
   saveData(data: TodoList){
 
     let id ='anon';
     if(!this.isAnon){
-      id=this.userName+":"+this.userId;
+      id=this.userName+":"+this.userId+this.idList;
+      // id=this.userName+":"+this.userId; //save
       console.log("id: "+id);
     }
     this.listDB.doc(id).set(data);
@@ -303,5 +321,53 @@ export class TodoListComponent implements OnInit {
    trackByFn(index: number, item: TodoItem){
     return index;
    }
+
+
+   obsList!: Observable<any>;
+
+
+   listNb=0;
+
+
+  countList(){
+    this.obsList.subscribe(data => {this.listNb=data.length
+      // this.listNb=data.reduce((acc:number)=>(acc));
+    });
+  }
+
+
+  idList='';
+
+  //creer une nouvelle liste voir aves les sauvegardes
+  newList(){
+ //premiere liste c'est nom: uid
+ //si index=0 c'est la premiere
+ //si index=1
+    console.log(this.listNb.toString());
+    let id ='anon';
+    this.idList=this.listNb.toString();
+    if(!this.isAnon){
+      // id=this.userName+":"+this.userId+this.listId;
+      id=this.userName+":"+this.userId+this.idList;
+    }
+    this.listDB.doc(id).set({label: 'TODO', items: [] }); //creation liste vierge
+    this.toDoService.loadData(id); //chargelent liste vierge
+    this.loadLocalFilters();
+    this.countRemaining.subscribe(remains => this.remaining=remains);
+    // this.idList.emit(this.listNb.toString());
+  }
+
+  //change de liste
+  selected=0;
+  changeList(id:string, i:number){
+    console.log("chargement "+id);
+    // this.idList.emit(lala);
+    this.toDoService.loadData(id);
+    this.selected=i;
+  }
+
+  isSelected(index: number):boolean{
+    return index==this.selected;
+  }
 
 }
