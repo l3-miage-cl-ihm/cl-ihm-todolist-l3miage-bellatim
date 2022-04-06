@@ -500,3 +500,26 @@ html, body { height: 100%; }
 #descr{
   display: inline-flex;
 }
+
+
+.grid-container {
+  display: grid; 
+  // background-color: rgb(88, 72, 65);
+  // background-color: rgb(172, 213, 255);
+  display: auto auto;
+}
+
+#qrInfo{
+  // background-color: rgb(255, 254, 254);
+  // color: whitesmoke;
+  font-weight: 400;
+  font-size:medium;
+  grid-column:2;
+  margin: auto;
+  margin-left:2em;
+  margin-right:2em;
+}
+
+#qr{
+grid-column:1;
+}

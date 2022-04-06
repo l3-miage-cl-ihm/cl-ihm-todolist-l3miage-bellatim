@@ -123,6 +123,37 @@
             "firebaseProject": "todo-list-ea372",
             "firebaseHostingSite": "todo-list-ea372"
           }
+        },
+        "cypress-run": {
+          "builder": "@cypress/schematic:cypress",
+          "options": {
+            "devServerTarget": "l3m-tpX-todolist-angular-y2022:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "l3m-tpX-todolist-angular-y2022:serve:production"
+            }
+          }
+        },
+        "cypress-open": {
+          "builder": "@cypress/schematic:cypress",
+          "options": {
+            "watch": true,
+            "headless": false
+          }
+        },
+        "e2e": {
+          "builder": "@cypress/schematic:cypress",
+          "options": {
+            "devServerTarget": "l3m-tpX-todolist-angular-y2022:serve",
+            "watch": true,
+            "headless": false
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "l3m-tpX-todolist-angular-y2022:serve:production"
+            }
+          }
         }
       }
     }

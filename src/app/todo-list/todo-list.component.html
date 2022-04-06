@@ -16,7 +16,7 @@
         </form>
 
         <!-- export/imprt -->
-        <a mat-stroked-button (click)="exportList()" [href]="downloadUri" title="Download JSON" download="todo.json" >Telecharger cette liste</a>
+        <a *ngIf="(obsToDo |async)?.items?.length!=0" mat-stroked-button (click)="exportList()" [href]="downloadUri" title="Download JSON" download="todo.json" >Telecharger cette liste</a>
         <button type="button" mat-stroked-button (click)="fileInput.click()">Importer liste</button>
         <input hidden (change)="importList($event)" #fileInput type="file" id="file">        <!-- <span>| Importer liste: </span><input type="file" class="form-control" id="file" (change)="importList($event)" /> -->
     </header>
@@ -48,7 +48,8 @@
         </ul>
     </section>
   
-    <footer class="footer">
+    <!-- si pas d'item, on affiche pas le footer -->
+    <footer *ngIf="(obsToDo |async)?.items?.length!=0"  class="footer">
         <!-- <span class="todo-count"><strong></strong> {{remaining}} restantes</span> -->
         <!-- Items restants -->
         <span *ngIf="countRemaining | async as nrest; else zero" class="todo-count"><strong> {{nrest}} restantes</strong></span>
@@ -77,10 +78,31 @@
     </footer>
     <br>
 
-    <qr-code *ngIf="!isShared" [value]="'mamounebellatif.xyz/list/'+idList"></qr-code>
+    <!-- <qr-code *ngIf="!isShared" [value]="'mamounebellatif.xyz/list/'+idList"></qr-code> -->
 
 
 </section>   
+
+<!-- <mat-card *ngIf="!isShared" class="grid-container">
+    <mat-card-content  id="qr">
+    <qr-code [value]="'mamounebellatif.xyz/list/'+idList"></qr-code>
+    </mat-card-content>
+    <mat-card-content  color="white" id="qrInfo" >
+        <span>Ce Qr code vous permet de partager cette liste et d'y acceder sans connexion
+            vous pourrez ainsi travailler avec d'autres personnes en même temps
+        </span>
+    </mat-card-content>
+</mat-card> -->
+<mat-card *ngIf="!isShared">
+<div class="grid-container">
+    <qr-code  id="qr" [value]="'mamounebellatif.xyz/list/'+idList"></qr-code>
+    <span  id="qrInfo" >Ce Qr code vous permet de partager cette liste et d'y acceder sans connexion
+            vous pourrez ainsi travailler avec d'autres personnes en même temps
+    </span>
+</div>
+</mat-card> 
+
+<br>
 <!-- liste des listes: matrix reloaded -->
 <section class="matrix" *ngIf="!isShared">
     

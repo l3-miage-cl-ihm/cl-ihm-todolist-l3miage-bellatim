@@ -129,6 +129,8 @@ export class TodoListComponent implements OnInit {
     }
   }
 
+  // totalItems = new BehaviorSubject<number>(0);
+  
 
   //sauvegarde les files de manière locale
   saveLocalFilters(){

@@ -30,4 +30,6 @@ supprimer liste: etes vous sur
 
 bug: quand on supprime on ne change pas d'item
 # fonctionnalités:
-    - Les 
+    - L'application est pwa
+
+test cypress
