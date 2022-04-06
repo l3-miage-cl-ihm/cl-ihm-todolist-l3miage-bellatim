@@ -11,3 +11,7 @@
 bug titre mobile low caps
 
 bug selection label quand on change
+
+get list id -> route -> login anon -> list
+
+si connecté items dans le qrcode

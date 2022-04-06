@@ -2,20 +2,19 @@ import { Component, OnInit, ChangeDetectionStrategy, HostListener, Input } from 
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import {AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from '@angular/fire/compat/firestore';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 // import { stringify } from 'querystring';
 import { BehaviorSubject, map, Observable, share } from 'rxjs';
 import { HistoryService, History } from '../history.service';
 import { TodoItem, TodoList, TodolistService } from '../todolist.service';
 
 @Component({
-  selector: 'app-todo-list',
-  templateUrl: './todo-list.component.html',
-  styleUrls: ['./todo-list.component.scss'],
+  templateUrl: '../todo-list/todo-list.component.html',
+  styleUrls: ['../todo-list/todo-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers:[TodolistService, HistoryService]
 })
-export class TodoListComponent implements OnInit {
+export class SharedListComponent implements OnInit {
 
   obsToDo: Observable<TodoList>;
   obsHistory: Observable<History<TodoList>>;
@@ -28,7 +27,7 @@ export class TodoListComponent implements OnInit {
   showDone=false;
   showActive=false;
 
-  isShared=false;
+
   /**Limitations:
    * L'application bug quand on fait ctrl z on ctrly
    * pour annuler ou revenir en vant lorsqu'on a changé
@@ -42,16 +41,18 @@ export class TodoListComponent implements OnInit {
   //nombre d'item restant
   countRemaining = new BehaviorSubject<number>(0);
 
-  @Input() userName!: string;
-  @Input() userId!: string;
-  @Input() isAnon!: boolean;
+  userName!: string;
+  userId!: string;
+  isAnon!: boolean;
 
   // @Input() listId='';
 
   subscribed=false;
-  currentId!:string;
 
-  constructor(router:Router,private sanitizer: DomSanitizer, private toDoService: TodolistService, private HS: HistoryService<TodoList>, private db: AngularFirestore) { 
+  isShared=true;
+  currentId='';
+
+  constructor(private route:ActivatedRoute,router:Router,private sanitizer: DomSanitizer, private toDoService: TodolistService, private HS: HistoryService<TodoList>, private db: AngularFirestore) { 
     this.obsToDo=this.toDoService.observable;
     this.obsHistory=this.HS.observable;
 
@@ -65,17 +66,24 @@ export class TodoListComponent implements OnInit {
   //puis s'abonne au compteurs
   //et charge les noms de liste de l'utilisateur
   //on derivant un abonnement depuis le service firestore
+  id!:string;
   ngOnInit(): void {
-    let id ='anon';
-    if(!this.isAnon){
-      // id=this.userName+":"+this.userId+this.listId;
-      id=this.userName+":"+this.userId;
-    }else{
-      this.userName='anon';
-    }
-    console.log("id: "+id+this.isAnon);
-    this.currentId=id;
-    this.toDoService.loadData(id);
+    //init des parametre du lien
+    this.userName='anon';
+    this.isAnon=true;
+    
+
+    // let id ='anon';
+    // if(!this.isAnon){
+    //   // id=this.userName+":"+this.userId+this.listId;
+    //   id=this.userName+":"+this.userId;
+    // }else{
+    //   this.userName='anon';
+    // }
+
+    this.id= this.userName+':'+this.route.snapshot.params['id'];
+
+    this.toDoService.loadData(this.id);
     this.count();
     this.loadLocalFilters();
     this.countRemaining.subscribe(remains => this.remaining=remains);
@@ -199,7 +207,7 @@ export class TodoListComponent implements OnInit {
       id=id+':'+this.idList;
     }
     this.obsToDo.subscribe(data=>{
-      this.listDB.doc(id).set(data);
+      this.listDB.doc(this.id).set(data);
       // localStorage.setItem('data',JSON.stringify(data));
       this.HS.push(data);
       console.log("saving");
@@ -216,7 +224,7 @@ export class TodoListComponent implements OnInit {
       // id=this.userName+":"+this.userId; //save
       console.log("id: "+id);
     }
-    this.listDB.doc(id).set(data);
+    this.listDB.doc(this.id).set(data);
       // localStorage.setItem('data',JSON.stringify(data));
 
   }

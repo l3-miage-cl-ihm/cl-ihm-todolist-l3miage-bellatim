@@ -17,13 +17,16 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatButtonModule} from '@angular/material/button';
 import {MatDividerModule} from '@angular/material/divider'; 
 import {MatListModule} from '@angular/material/list'; 
-
+import { AppRoutingModule } from './app-routing.module';
+import { SharedListComponent } from './shared-list/shared-list.component';
+import { QRCodeModule } from 'angular2-qrcode';
 @NgModule({
   declarations: [
     AppComponent,
     TodoListComponent,
     TodoItemComponent,
-    SelectionComponent
+    SelectionComponent,
+    SharedListComponent
   ],
   imports: [
     BrowserModule,
@@ -42,7 +45,9 @@ import {MatListModule} from '@angular/material/list';
     BrowserAnimationsModule,
     MatButtonModule,    
     MatDividerModule,
-    MatListModule
+    MatListModule,
+    AppRoutingModule,
+    QRCodeModule
   ],
   providers: [],
   bootstrap: [AppComponent]

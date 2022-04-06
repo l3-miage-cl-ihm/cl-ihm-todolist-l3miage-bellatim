@@ -4,6 +4,7 @@ import { HistoryService , History} from './history.service';
 import { TodoItem, TodoList, TodolistService } from './todolist.service';
 import {AngularFireAuth} from '@angular/fire/compat/auth';
 import firebase from 'firebase/compat/app';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -15,11 +16,18 @@ export class AppComponent {
   title = 'l3m-tpX-todolist-angular-y2022';  
   userId = 'id';
   idList = '';
-  constructor(public auth: AngularFireAuth){
+currentPath!:string;
+  constructor(public auth: AngularFireAuth, public router:Router){
+    // currentPath=router.isActive('list',false);
+
   }
 
   login() {
     this.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+    // if(this.auth){
+    //   console.log("navigate");
+    //   this.router.navigate(['/list']);
+    // }
     // this.user=this.auth.user.subscribe(data => this.user=data.)
   }
 

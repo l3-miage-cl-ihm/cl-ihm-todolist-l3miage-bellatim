@@ -1,3 +1,4 @@
+<div *ngIf="router.url==='/'">
 <div *ngIf="auth.user | async as user; else showLogin">
     <h1 class="pp" *ngIf="!user.isAnonymous; else anon ">Bonjour {{ user.displayName }}!</h1>
     <ng-template #anon>
@@ -7,6 +8,7 @@
     <br>
     <button mat-raised-button color="warn" (click)="logout()" class="logout">Logout</button>
     <app-todo-list  [userName]="user.displayName || ''" [userId]="user.uid" [isAnon]="user.isAnonymous"></app-todo-list>
+    <!-- <router-outlet></router-outlet> -->
     <!-- <app-selection (idList)="idList=$event" [userName]="user.displayName || ''" [userId]="user.uid" [isAnon]="user.isAnonymous"></app-selection> -->
   </div>
   <ng-template class="login" #showLogin>
@@ -19,5 +21,7 @@
     <br>
     <button class="logbut" mat-raised-button (click)="loginAnon()">Connectez vous de manière anonyme (liste collaboratives)</button>
   </ng-template>
+</div>
+  <mat-divider></mat-divider>
 
-
+  <router-outlet ></router-outlet>

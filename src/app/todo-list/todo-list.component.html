@@ -74,12 +74,14 @@
         <button (click)="deleteDone()" class="clear-completed">Supprimer cochées</button>
 
     </footer>
+    <br>
 
+    <qr-code *ngIf="!isShared" [value]="'mamounebellatif.xyz/list/'+currentId"></qr-code>
 
 
 </section>   
 <!-- liste des listes: matrix reloaded -->
-<section class="matrix">
+<section class="matrix" *ngIf="!isShared">
     
     <mat-list role="list"   *ngIf="obsList | async as L">
         <h2 id="listTitle">Vos listes ({{listNb}})</h2>
@@ -95,6 +97,7 @@
     <!-- nouvelle liste: neo rencontre l'architecte-->
     <a (click)="newList(listNb)" class="new-list" > Creer nouvelle liste</a>
 </section>
+
 
   <!-- changement label  -->
      <!-- <input *ngIf="obsToDo | async as TD" #newTextInput
