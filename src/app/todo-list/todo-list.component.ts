@@ -352,6 +352,7 @@ export class TodoListComponent implements OnInit {
     this.selected=this.listNb;
     // this.currentId=this.idList;
     this.currentId=id;
+
   }
 
   //change de liste

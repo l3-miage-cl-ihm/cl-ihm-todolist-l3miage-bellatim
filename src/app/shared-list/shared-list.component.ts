@@ -87,13 +87,13 @@ export class SharedListComponent implements OnInit {
         changes.map(
           c => ({id: c.payload.doc.id,label:c.payload.doc.data().label})
         ).filter(c =>{ if(c.id.includes(this.route.snapshot.params['id'])){
+                  console.log("include cid:"+c.id)
                   this.id=c.id;
+                  this.toDoService.loadData(this.id);
         }})
-        ), share());
+        ));
 
     // this.userName=this.id.replace()
-
-    this.toDoService.loadData(this.id);
     this.count();
     this.loadLocalFilters();
     this.countRemaining.subscribe(remains => this.remaining=remains);
