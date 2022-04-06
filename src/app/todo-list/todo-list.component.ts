@@ -35,8 +35,6 @@ export class TodoListComponent implements OnInit {
    * de liste
    */
 
-  //sauvegarder avec document  nom auth
-  // private todoDoc!: AngularFirestoreDocument<TodoList>; , private afs: AngularFirestore
   listDB!: AngularFirestoreCollection<TodoList>;
 
   //nombre d'item restant
@@ -46,9 +44,8 @@ export class TodoListComponent implements OnInit {
   @Input() userId!: string;
   @Input() isAnon!: boolean;
 
-  // @Input() listId='';
 
-  subscribed=false;
+  // subscribed=false; supprimer
   currentId!:string;
 
   constructor(router:Router,private sanitizer: DomSanitizer, private toDoService: TodolistService, private HS: HistoryService<TodoList>, private db: AngularFirestore) { 
@@ -56,8 +53,6 @@ export class TodoListComponent implements OnInit {
     this.obsHistory=this.HS.observable;
 
     this.listDB=db.collection('/todoList');
-    // this.obsToDo=this.listDB.doc('id').get();
-    // this.listDB.valueChanges();
   }
 
 
@@ -102,22 +97,14 @@ export class TodoListComponent implements OnInit {
 
   //exxporter une liste en JSON
   exportList(){
-    
-
     let exportedData!:string;
-
-    let id ='anon';
-    if(!this.isAnon){
-      id=this.userName+":"+this.userId;
-      console.log("id: "+id);
-    }
     this.toDoService.observable.subscribe(data=>{
       localStorage.setItem('data',JSON.stringify(data));
       exportedData = JSON.stringify(data);
       console.log("exporting");
     }).unsubscribe();
 
-    var uri = this.sanitizer.bypassSecurityTrustUrl("data:text/json;charset=UTF-8," + encodeURIComponent(exportedData));
+    let uri = this.sanitizer.bypassSecurityTrustUrl("data:text/json;charset=UTF-8," + encodeURIComponent(exportedData));
     this.downloadUri = uri;
   }
 
@@ -142,9 +129,6 @@ export class TodoListComponent implements OnInit {
     }
   }
 
-  generateQRcode(){
-    
-  }
 
   //sauvegarde les files de manière locale
   saveLocalFilters(){
@@ -186,20 +170,8 @@ export class TodoListComponent implements OnInit {
   //on s'abonne a l'observable pour pouvoir le mettre dans le localStorage, push dans l'historique et unsubscribe pour eviter les doublons
   //charge la sauvegarde courante
   private saveState(){
-    
-    // var username: string;
-    // this.auth.user.subscribe(data =>{ 'id'=data?.displayName != null }).unsubscribe;
-    let id ='anon';
-    if(!this.isAnon){
-      id=this.userName+":"+this.userId+this.idList;
-      // id=this.userName+":"+this.userId; //Save
-      console.log("id: "+id);
-    }
-    else{
-      id=id+':'+this.idList;
-    }
     this.obsToDo.subscribe(data=>{
-      this.listDB.doc(id).set(data);
+      this.listDB.doc(this.currentId).set(data);
       // localStorage.setItem('data',JSON.stringify(data));
       this.HS.push(data);
       console.log("saving");
@@ -207,27 +179,16 @@ export class TodoListComponent implements OnInit {
     
   }
 
-  //charge une sauvegarde précise
+  //charge une sauvegarde précise 
   saveData(data: TodoList){
-
-    let id ='anon';
-    if(!this.isAnon){
-      id=this.userName+":"+this.userId+this.idList;
-      // id=this.userName+":"+this.userId; //save
-      console.log("id: "+id);
-    }
-    this.listDB.doc(id).set(data);
-      // localStorage.setItem('data',JSON.stringify(data));
-
+    this.listDB.doc(this.currentId).set(data);
   }
 
 
-
-    //ajoute un item dans la liste
-    add(label: string){
-    this.toDoService.create(label);
-    this.saveState();
-    // this.afs.collection("items").add(label);
+  //ajoute un item dans la liste
+  add(label: string){
+  this.toDoService.create(label);
+  this.saveState();
   }
 
   //supprime un item de la liste
@@ -285,6 +246,7 @@ export class TodoListComponent implements OnInit {
     this.obsToDo.subscribe(data=>this.countRemaining.next(data.items.reduce((acc, item)=>(!item.isDone)?acc+1:acc,0)));
 
   }
+
   //en cours d'edition ou pas
   changeEdit(isEditing: boolean, item: TodoItem){
     this.toDoService.update({isEditing:!isEditing}, item);
@@ -345,17 +307,17 @@ export class TodoListComponent implements OnInit {
   }
 
 
-
    //pour ne pas perdre le focus quand on met a jour un item
    trackByFn(index: number, item: TodoItem){
     return index;
    }
 
 
-  //  obsList!: Observable<any>;
+  //  id et label des liste de l'utilisateur
    obsList!: Observable<{id:string,label:string}[]>;
 
 
+   //nombre de liste 
    listNb=0;
 
 
@@ -366,35 +328,30 @@ export class TodoListComponent implements OnInit {
     });
   }
 
-
+  //id de la nouvelle liste
   idList='';
 
   //creer une nouvelle liste voir aves les sauvegardes
-  selectedLabel='';
+  selectedLabel=''; //supprimer
   newList(i: number){ 
- //premiere liste c'est nom: uid
- //si index=0 c'est la premiere
- //si index=1
     this.toDoService.firestoreObs.unsubscribe(); //il faut unsub a chaque changemet sinon on des centianes d'instances qui s'ajoutent
     console.log(this.listNb.toString());
     let id ='anon';
-    // this.idList=this.listNb.toString(); //genere un bug quand on supprime liste
     this.idList=this.randomString();
     if(!this.isAnon){
-      // id=this.userName+":"+this.userId+this.listId;
-      id=this.userName+":"+this.userId+this.idList;
+      id=this.userName+":"+this.userId+this.listNb.toString()+this.idList;
     }
     else{
-      id=this.userName+":"+this.idList;
+      id=this.userName+":"+this.listNb.toString()+this.idList;
     }
     this.listDB.doc(id).set({label: 'TODO'+(i+1), items: [] }); //creation liste vierge
     this.toDoService.loadData(id); //chargelent liste vierge
     this.loadLocalFilters();
     this.countRemaining.subscribe(remains => this.remaining=remains);
-    // this.idList.emit(this.listNb.toString());
 
     this.selected=this.listNb;
-    this.currentId=this.idList;
+    // this.currentId=this.idList;
+    this.currentId=id;
   }
 
   //change de liste
@@ -409,7 +366,8 @@ export class TodoListComponent implements OnInit {
     this.idList=i.toString()=='0'?'':id.replace(this.userName,'').replace(this.userId,'').replace(':',''); //pour selectionner la bonne liste de l'utilisateur, la premiere etant coposé de son nom met uid
     console.log("idlist"+this.idList);//debug
     this.toDoService.loadData(id);//on charge la bonne liste depuis le service
-    this.currentId=this.idList;
+    // this.currentId=this.idList;
+    this.currentId=id;
   }
 
   //utilisé pour determiner si une liste est selectionné
@@ -420,7 +378,23 @@ export class TodoListComponent implements OnInit {
   }
 
   deleteList(list: {id:string,label:string}){
-    this.listDB.doc(list.id).delete();
+    if(this.listNb>1){
+      this.listDB.doc(list.id).delete();
+      if(this.currentId==list.id){
+        let id ='anon';
+        if(!this.isAnon){
+          id=this.userName+":"+this.userId;
+        }
+        else{
+          this.userName='anon';
+        }
+        this.currentId=id;
+        this.toDoService.loadData(id);
+
+      }
+      
+    }
+
   }
   
   //update le nom de liste

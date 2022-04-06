@@ -1,12 +1,21 @@
 <div *ngIf="router.url==='/'">
 <div *ngIf="auth.user | async as user; else showLogin">
-    <h1 class="pp" *ngIf="!user.isAnonymous; else anon ">Bonjour {{ user.displayName }}!</h1>
-    <ng-template #anon>
-      <h1 #anon> Bonjour, la liste est partagée avec tous les anononymes</h1>
-    </ng-template>
-    <img id="picture" [src]="user.photoURL" class="pp" alt="">
-    <br>
-    <button mat-raised-button color="warn" (click)="logout()" class="logout">Logout</button>
+    <mat-card>
+      <mat-card-title class="pp" *ngIf="!user.isAnonymous; else anon ">Bonjour {{ user.displayName }}!</mat-card-title>
+      <mat-card-content class="pp">
+         <span id="descr">Vous pouvez ajouter des éléments,
+         les modifier en cliquant deux fois sur l'item voulu, et ajouter d'autres listes</span>
+        <!-- </mat-card-content> -->
+        <img  mat-card-sm-image id="picture" [src]="user.photoURL" class="pp" alt="" *ngIf="!user.isAnonymous">
+      <!-- <mat-card-content> -->
+        <button mat-raised-button color="warn" (click)="logout()" class="logout">Logout</button>
+      </mat-card-content>
+      <ng-template #anon>
+        <mat-card-title #anon> Bonjour jeune internaute</mat-card-title>
+        <mat-card-subtitle class="pp">Ces listes sont partagés en temps réel avec tous les anonymes</mat-card-subtitle>
+      </ng-template>
+    </mat-card>
+
     <app-todo-list  [userName]="user.displayName || ''" [userId]="user.uid" [isAnon]="user.isAnonymous"></app-todo-list>
     <!-- <router-outlet></router-outlet> -->
     <!-- <app-selection (idList)="idList=$event" [userName]="user.displayName || ''" [userId]="user.uid" [isAnon]="user.isAnonymous"></app-selection> -->
@@ -23,5 +32,4 @@
   </ng-template>
 </div>
   <mat-divider></mat-divider>
-
   <router-outlet ></router-outlet>

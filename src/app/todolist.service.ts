@@ -41,24 +41,6 @@ export class TodolistService {
     this.subj.next(data);
   }
 
-  loadDataInit(id:string){
-    this.listDB.snapshotChanges().pipe(
-      map(changes =>
-        changes.map(
-          c => ({id: c.payload.doc.id,...c.payload.doc.data()})
-        )
-        )
-    ,share()).subscribe(data => {
-      data.forEach(
-        a => {console.log("load");
-          if(a.id==id){
-            this.subj.next({label:a.label, items: a.items});
-          }
-        }
-      )
-     } ).unsubscribe();
-
-  }
 
   //suppression de liste dans firestore
  
@@ -93,13 +75,6 @@ export class TodolistService {
      } );
 
 
-    // this.listDB.doc('id').get().subscribe(donne =>{
-    //   console.log("ttteeeeeest");
-    //     console.log("firestore: "+donne.data()?.label);
-    //     this.subj.next(donne.data() || {label: 'TODO', items: [] } )
-    //   // }
-    // });
-
     
     
   }
@@ -107,12 +82,8 @@ export class TodolistService {
   updateLabel(title:string){
       const L = this.subj.value;
       this.subj.next( {...L,label:title
-        // ...L,
-        // items: L.items.map( item => items.indexOf(item) >= 0 ? {...item, ...data} : item )
       } );
-   
-    // this.listRef.doc('id').set(this.subj.value);
-    return this;
+      return this;
   }
 
   reinit(){

@@ -81,7 +81,17 @@ export class SharedListComponent implements OnInit {
     //   this.userName='anon';
     // }
 
-    this.id= this.userName+':'+this.route.snapshot.params['id'];
+    // this.id= this.userName+':'+this.route.snapshot.params['id'];
+    this.obsList=this.listDB.snapshotChanges().pipe(
+      map(changes =>
+        changes.map(
+          c => ({id: c.payload.doc.id,label:c.payload.doc.data().label})
+        ).filter(c =>{ if(c.id.includes(this.route.snapshot.params['id'])){
+                  this.id=c.id;
+        }})
+        ), share());
+
+    // this.userName=this.id.replace()
 
     this.toDoService.loadData(this.id);
     this.count();
@@ -94,12 +104,7 @@ export class SharedListComponent implements OnInit {
     // this.count();
 
     //init de selection
-    this.obsList=this.listDB.snapshotChanges().pipe(
-      map(changes =>
-        changes.map(
-          c => ({id: c.payload.doc.id,label:c.payload.doc.data().label})
-        ).filter(c => c.id.includes(this.userName))
-        ), share());
+ 
     this.countList();
 
   }

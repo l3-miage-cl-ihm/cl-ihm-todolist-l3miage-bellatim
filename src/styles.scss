@@ -434,14 +434,15 @@ html .clear-completed:active {
 
 .logout,
 html .logout:active {
-  padding-bottom: 10%;
-  margin-bottom: 10em;
-  float: left;
-  position: relative;
-  line-height: 20px;
-  text-decoration: none;
-  cursor: pointer;
-  font-size: large;
+  // padding-bottom: 10%;
+  // margin-bottom: 10em;
+  // float: left;
+  // position: relative;
+  // line-height: 20px;
+  // text-decoration: none;
+  // cursor: pointer;
+  // font-size: large;
+  display: inline;
 }
 
 .new-list:hover,
@@ -454,6 +455,7 @@ html .logout:active {
   // float:right;
   margin-left: 60%;
   text-align: right;
+  color:#af5b5e;
 }
 
 .new-list {
@@ -485,4 +487,16 @@ html, body { height: 100%; }
 
 #picture{
   margin-top: 2em;
+  display: inline-flex;
+  border-radius: 50%;
+}
+
+.logout{
+  display:inline-flex;
+  margin-left: auto;
+  float:right;
+}
+
+#descr{
+  display: inline-flex;
 }

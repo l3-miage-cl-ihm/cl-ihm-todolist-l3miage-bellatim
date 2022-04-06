@@ -20,6 +20,7 @@ import {MatListModule} from '@angular/material/list';
 import { AppRoutingModule } from './app-routing.module';
 import { SharedListComponent } from './shared-list/shared-list.component';
 import { QRCodeModule } from 'angular2-qrcode';
+import { MatCardModule } from '@angular/material/card';
 @NgModule({
   declarations: [
     AppComponent,
@@ -47,7 +48,8 @@ import { QRCodeModule } from 'angular2-qrcode';
     MatDividerModule,
     MatListModule,
     AppRoutingModule,
-    QRCodeModule
+    QRCodeModule,
+    MatCardModule
   ],
   providers: [],
   bootstrap: [AppComponent]

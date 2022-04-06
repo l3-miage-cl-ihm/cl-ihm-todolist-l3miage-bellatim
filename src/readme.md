@@ -21,3 +21,13 @@ partager list meme pas a anon
 reparer le routing quand on est sur firehost
 
 reparer id premier liste
+
+verifier ctrl z
+
+supprimer liste: etes vous sur
+
+
+
+bug: quand on supprime on ne change pas d'item
+# fonctionnalités:
+    - Les 
