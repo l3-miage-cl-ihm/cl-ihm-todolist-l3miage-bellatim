@@ -64,9 +64,10 @@ export class TodoListComponent implements OnInit {
     let id ='anon';
     if(!this.isAnon){
       // id=this.userName+":"+this.userId+this.listId;
-      id=this.userName+":"+this.userId;
+      id=this.userName+":"+this.userId+'0';
     }else{
       this.userName='anon';
+      id='anon0'
     }
     console.log("id: "+id+this.isAnon);
     this.currentId=id;
@@ -89,6 +90,18 @@ export class TodoListComponent implements OnInit {
         ), share());
     this.countList();
 
+
+   /**
+    * Pour le qr code
+    * idList au demarrage sera equivalement a la premiere liste 
+    * on devrait initiser le premier doc a id+1*/
+   if(!this.isAnon){
+     this.idList=this.userId;
+     console.log('qrcode '+this.idList);
+   } 
+   else{
+     this.idList=id;
+   }
   }
 
 
@@ -331,7 +344,7 @@ export class TodoListComponent implements OnInit {
   }
 
   //id de la nouvelle liste
-  idList='';
+  idList!:string;
 
   //creer une nouvelle liste voir aves les sauvegardes
   selectedLabel=''; //supprimer
@@ -371,6 +384,17 @@ export class TodoListComponent implements OnInit {
     this.toDoService.loadData(id);//on charge la bonne liste depuis le service
     // this.currentId=this.idList;
     this.currentId=id;
+
+    /**Pour le qr code si premiere liste on change l'id du qrcode */
+    if(i==0){
+      if(!this.isAnon){
+        this.idList=this.userId;
+        console.log('qrcode '+this.idList);
+      } 
+      else{
+        this.idList=id;
+      }
+    }
   }
 
   //utilisé pour determiner si une liste est selectionné

@@ -33,3 +33,5 @@ bug: quand on supprime on ne change pas d'item
     - L'application est pwa
 
 test cypress
+
+fix qr code premier item
