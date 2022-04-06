@@ -90,6 +90,8 @@ export class TodoListComponent implements OnInit {
 
   }
 
+
+
   downloadUri!:SafeUrl;
 
   //exxporter une liste en JSON
@@ -165,7 +167,6 @@ export class TodoListComponent implements OnInit {
 
 
   ngOnDestroy(){
-
   }
 
   @HostListener('document:keydown.control.z') undo(event: KeyboardEvent) { 
