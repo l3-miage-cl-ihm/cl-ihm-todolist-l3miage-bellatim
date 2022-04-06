@@ -85,6 +85,7 @@ export class TodolistService {
       data.forEach(
         a => {console.log("load");
           if(a.id==id){
+            console.log("aid: "+a.id);
             this.subj.next({label:a.label, items: a.items});
           }
         }

@@ -1,19 +1,23 @@
 <div *ngIf="auth.user | async as user; else showLogin">
-    <h1 *ngIf="!user.isAnonymous; else anon ">Bonjour {{ user.displayName }}!</h1>
+    <h1 class="pp" *ngIf="!user.isAnonymous; else anon ">Bonjour {{ user.displayName }}!</h1>
     <ng-template #anon>
       <h1 #anon> Bonjour, la liste est partagée avec tous les anononymes</h1>
     </ng-template>
-    <img [src]="user.photoURL" class="img-fluid|thumbnail rounded-top|rounded-end|rounded-bottom|rounded-start|rounded-circle|" alt="">
+    <img id="picture" [src]="user.photoURL" class="pp" alt="">
     <br>
-    <button (click)="logout()" class="logout">Logout</button>
+    <button mat-raised-button color="warn" (click)="logout()" class="logout">Logout</button>
     <app-todo-list  [userName]="user.displayName || ''" [userId]="user.uid" [isAnon]="user.isAnonymous"></app-todo-list>
     <!-- <app-selection (idList)="idList=$event" [userName]="user.displayName || ''" [userId]="user.uid" [isAnon]="user.isAnonymous"></app-selection> -->
   </div>
-  <ng-template #showLogin>
+  <ng-template class="login" #showLogin>
     <p>Please login.</p>
-    <button class="other-lists" (click)="login()">Login with Google</button>
+    <mat-divider></mat-divider>
     <br>
-    <button class="other-lists"(click)="loginAnon()">Login anonimously (liste partagée en temps réel avec tous les utilisateurs)</button>
+    <!-- <button mat-raised-button class="other-lists" (click)="login()">Login with Google</button> -->
+    <button class="logbut" mat-raised-button color="primary" (click)="login()">Connectez vous avec Google</button>
+    <br>
+    <br>
+    <button class="logbut" mat-raised-button (click)="loginAnon()">Connectez vous de manière anonyme (liste collaboratives)</button>
   </ng-template>
 
 

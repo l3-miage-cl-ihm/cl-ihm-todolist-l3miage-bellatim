@@ -7,6 +7,7 @@ html,
 body {
   margin: 0;
   padding: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif; 
 }
 
 button {
@@ -420,6 +421,7 @@ html .clear-completed:active {
   box-sizing: border-box;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  margin-top: 1em;
 }
 
 .matrix {
@@ -433,6 +435,7 @@ html .clear-completed:active {
 .logout,
 html .logout:active {
   padding-bottom: 10%;
+  margin-bottom: 10em;
   float: left;
   position: relative;
   line-height: 20px;
@@ -448,13 +451,38 @@ html .logout:active {
 }
 
 .delete {
-  float:right;
-  padding-right: 2%;
+  // float:right;
+  margin-left: 60%;
+  text-align: right;
 }
 
 .new-list {
   padding-bottom:15em;
-  padding-left: 25%;
+  padding-left: 40%;
   float:center;
   position: relative;
+  text-align: center;
+}
+html, body { height: 100%; }
+// body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+#mat-raised-button{
+  padding-top: 50%;
+}
+
+.logbut{
+  float: center;
+  position: relative;
+}
+
+#listTitle{
+  text-align: center;
+  position: relative;
+}
+.pp{
+  display: inline;
+}
+
+#picture{
+  margin-top: 2em;
 }

@@ -68,6 +68,8 @@ export class TodoListComponent implements OnInit {
     if(!this.isAnon){
       // id=this.userName+":"+this.userId+this.listId;
       id=this.userName+":"+this.userId;
+    }else{
+      this.userName='anon';
     }
     this.toDoService.loadData(id);
     this.count();
@@ -188,6 +190,9 @@ export class TodoListComponent implements OnInit {
       id=this.userName+":"+this.userId+this.idList;
       // id=this.userName+":"+this.userId; //Save
       console.log("id: "+id);
+    }
+    else{
+      id=id+':'+this.idList;
     }
     this.obsToDo.subscribe(data=>{
       this.listDB.doc(id).set(data);
@@ -361,7 +366,8 @@ export class TodoListComponent implements OnInit {
   idList='';
 
   //creer une nouvelle liste voir aves les sauvegardes
-  newList(){ //ajouter index pour selected
+  selectedLabel='';
+  newList(i: number){ 
  //premiere liste c'est nom: uid
  //si index=0 c'est la premiere
  //si index=1
@@ -374,7 +380,10 @@ export class TodoListComponent implements OnInit {
       // id=this.userName+":"+this.userId+this.listId;
       id=this.userName+":"+this.userId+this.idList;
     }
-    this.listDB.doc(id).set({label: 'TODO', items: [] }); //creation liste vierge
+    else{
+      id=this.userName+":"+this.idList;
+    }
+    this.listDB.doc(id).set({label: 'TODO'+(i+1), items: [] }); //creation liste vierge
     this.toDoService.loadData(id); //chargelent liste vierge
     this.loadLocalFilters();
     this.countRemaining.subscribe(remains => this.remaining=remains);

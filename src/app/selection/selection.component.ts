@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
 import { BehaviorSubject, map, Observable } from 'rxjs';
 import { TodoItem, TodoList, TodolistService } from '../todolist.service';
+import {MatDivider}  from '@angular/material/divider'
 
 @Component({
   selector: 'app-selection',

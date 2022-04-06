@@ -7,3 +7,7 @@
     - routing
     - progressive app
     -angular material
+
+bug titre mobile low caps
+
+bug selection label quand on change
