@@ -15,3 +15,9 @@ bug selection label quand on change
 get list id -> route -> login anon -> list
 
 si connecté items dans le qrcode
+
+partager list meme pas a anon
+
+reparer le routing quand on est sur firehost
+
+reparer id premier liste

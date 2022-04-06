@@ -394,6 +394,7 @@ export class TodoListComponent implements OnInit {
     // this.idList.emit(this.listNb.toString());
 
     this.selected=this.listNb;
+    this.currentId=this.idList;
   }
 
   //change de liste
@@ -408,7 +409,7 @@ export class TodoListComponent implements OnInit {
     this.idList=i.toString()=='0'?'':id.replace(this.userName,'').replace(this.userId,'').replace(':',''); //pour selectionner la bonne liste de l'utilisateur, la premiere etant coposé de son nom met uid
     console.log("idlist"+this.idList);//debug
     this.toDoService.loadData(id);//on charge la bonne liste depuis le service
-
+    this.currentId=this.idList;
   }
 
   //utilisé pour determiner si une liste est selectionné

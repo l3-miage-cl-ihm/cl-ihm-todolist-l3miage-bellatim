@@ -1,6 +1,10 @@
 {
   "hosting": {
     "public": "dist/l3m-tp-x-todolist-angular-y2022",
+    "rewrites": [{
+      "source":"**",
+      "destination": "/index.html"
+    }],
     "ignore": [
       "firebase.json",
       "**/.*",
