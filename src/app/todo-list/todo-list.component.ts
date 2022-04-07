@@ -76,12 +76,9 @@ export class TodoListComponent implements OnInit {
     this.loadLocalFilters();
     this.countRemaining.subscribe(remains => this.remaining=remains);
 
-    // this.listDB.doc('id').get().then(data =>{
-    //   console.log("getId");
-    //  this.toDoService.load(data.data() || {label: 'TODO', items: [] })}).unsubscribe();
-    // this.count();
+  
 
-    //init de selection
+    //init de selection des listes
     this.obsList=this.listDB.snapshotChanges().pipe(
       map(changes =>
         changes.map(
@@ -96,7 +93,7 @@ export class TodoListComponent implements OnInit {
     * idList au demarrage sera equivalement a la premiere liste 
     * on devrait initiser le premier doc a id+1*/
    if(!this.isAnon){
-     this.idList=this.userId;
+     this.idList=this.userId+'0';
      console.log('qrcode '+this.idList);
    } 
    else{
@@ -388,11 +385,11 @@ export class TodoListComponent implements OnInit {
     /**Pour le qr code si premiere liste on change l'id du qrcode */
     if(i==0){
       if(!this.isAnon){
-        this.idList=this.userId;
+        this.idList=this.userId+'0';
         console.log('qrcode '+this.idList);
       } 
       else{
-        this.idList=id;
+        this.idList='anon0';
       }
     }
   }
