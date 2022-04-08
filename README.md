@@ -21,6 +21,7 @@ Projet TODO
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.2.2.
 
 # Bug connus et limitations:
-- le label de liste bug quand on change de liste
-sur mobile
 - Annuler ou refaire une action génère des bugs lorsqu'on change de liste
+- Annuler efface la liste quand c'est la première action, donc annuler ne marche volontairement qu'a partir de la deuxième action
+- l'affichage du label de liste bug quand on change de liste
+sur mobile
