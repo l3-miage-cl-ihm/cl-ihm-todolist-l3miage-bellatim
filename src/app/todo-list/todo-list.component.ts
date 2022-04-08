@@ -74,11 +74,11 @@ export class TodoListComponent implements OnInit {
     this.toDoService.loadData(id);
     this.count();
     this.loadLocalFilters();
-    this.countRemaining.subscribe(remains => this.remaining=remains);
+    this.countRemaining.subscribe(remains => this.remaining=remains); //inutile
 
   
 
-    //init de selection des listes
+    //init de l'observable de  selection des listes
     this.obsList=this.listDB.snapshotChanges().pipe(
       map(changes =>
         changes.map(
@@ -89,6 +89,7 @@ export class TodoListComponent implements OnInit {
 
 
    /**
+    * init de l'id pour le QrCode
     * Pour le qr code
     * idList au demarrage sera equivalement a la premiere liste 
     * on devrait initiser le premier doc a id+1*/
@@ -98,6 +99,7 @@ export class TodoListComponent implements OnInit {
    } 
    else{
      this.idList=id;
+     
    }
   }
 
@@ -199,8 +201,8 @@ export class TodoListComponent implements OnInit {
 
   //ajoute un item dans la liste
   add(label: string){
-  this.toDoService.create(label);
-  this.saveState();
+    this.toDoService.create(label);
+    this.saveState();
   }
 
   //supprime un item de la liste
@@ -302,7 +304,7 @@ export class TodoListComponent implements OnInit {
         item => {if(item.isDone){this.toDoService.delete(item)}
           })).unsubscribe();
 
-  this.saveState();
+    this.saveState();
   }
 
   
@@ -405,12 +407,13 @@ export class TodoListComponent implements OnInit {
     if(this.listNb>1){
       this.listDB.doc(list.id).delete();
       if(this.currentId==list.id){
-        let id ='anon';
+        let id ='anon0';
         if(!this.isAnon){
-          id=this.userName+":"+this.userId;
+          id=this.userName+":"+this.userId+'0';
         }
         else{
           this.userName='anon';
+          this.idList='anon0';
         }
         this.currentId=id;
         this.toDoService.loadData(id);
