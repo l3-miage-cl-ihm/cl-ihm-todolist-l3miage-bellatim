@@ -21,10 +21,6 @@
         <input hidden (change)="importList($event)" #fileInput type="file" id="file">        <!-- <span>| Importer liste: </span><input type="file" class="form-control" id="file" (change)="importList($event)" /> -->
     </header>
 
-    <!-- <section class="todoapp"> -->
-        
-    <!-- </section> -->
-
     <section class="main">
         <!-- Bouton de selection (CHECKall) (disparait quand la valeure est a zero, donc on ajoute un else au lieu de [checked]=isCheked) -->
         <input *ngIf="countRemaining | async as nrest; else unchecked" class="toggle-all" type="checkbox" name="toggleAll"  />
@@ -77,25 +73,10 @@
 
     </footer>
     <br>
-
-    <!-- <qr-code *ngIf="!isShared" [value]="'mamounebellatif.xyz/list/'+idList"></qr-code> -->
-
-
 </section>   
-
-<!-- <mat-card *ngIf="!isShared" class="grid-container">
-    <mat-card-content  id="qr">
-    <qr-code [value]="'mamounebellatif.xyz/list/'+idList"></qr-code>
-    </mat-card-content>
-    <mat-card-content  color="white" id="qrInfo" >
-        <span>Ce Qr code vous permet de partager cette liste et d'y acceder sans connexion
-            vous pourrez ainsi travailler avec d'autres personnes en même temps
-        </span>
-    </mat-card-content>
-</mat-card> -->
 <mat-card *ngIf="!isShared">
 <div class="grid-container">
-    <qr-code  id="qr" [value]="'mamounebellatif.xyz/list/'+idList"></qr-code>
+    <qr-code  id="qr" [value]="'todo.mamounebellatif.com/list/'+idList"></qr-code>
     <span  id="qrInfo" >Ce Qr code vous permet de partager cette liste et d'y acceder sans vous connecter
             vous pourrez ainsi travailler avec d'autres personnes en même temps
     </span>
@@ -103,7 +84,6 @@
 </mat-card> 
 
 <br>
-<!-- liste des listes: matrix reloaded -->
 <section class="matrix" *ngIf="!isShared">
     
     <mat-list role="list"   *ngIf="obsList | async as L">
@@ -111,14 +91,11 @@
         <mat-divider></mat-divider>
         <mat-list-item role="listitem"  *ngFor="let item of L; let i = index" > 
             <a  [class.selected]="item.id==currentId" class="other-lists" (click)="changeList(item.id, i)">{{item.label}}</a>
-            <!-- <a  [class.selected]="i==selected" class="other-lists" (click)="changeList(item.id, i)">{{item.id.replace(userId,'')}}, {{item.label}}</a> -->
             <a *ngIf="i!=0" (click)="deleteList(item)" class="delete"> supprimer liste</a>
-            <!-- <a id="sup" mat-flat-button color="warn" (click)="deleteList(item)" class="delete"> supprimer liste</a> -->
             <mat-divider></mat-divider>
 
         </mat-list-item>
     </mat-list>
-    <!-- nouvelle liste: neo rencontre l'architecte-->
     <a mat-raised-button  (click)="newList(listNb)" class="new-list" > Creer nouvelle liste</a>
 </section>
 
